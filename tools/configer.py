@@ -33,6 +33,8 @@ class Configer(object):
 
     @staticmethod
     def get_para(para_text):
+        if not os.path.exists(os.path.realpath(sys.argv[0]) + os.sep + ".." + os.sep + "para.txt"):
+            return ""
         with open(os.path.realpath(sys.argv[0]) + os.sep + ".." + os.sep + "para.txt", "r") as f:
             for line in f.readlines():
                 if line.split("=")[0] == para_text:
