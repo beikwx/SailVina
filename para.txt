@@ -1,0 +1,7 @@
+python_path=
+obabel_path=
+pdbid=1
+pdb_path=2
+extract_ligand_path=4
+raw_receptor_path=3
+preped_path=5
