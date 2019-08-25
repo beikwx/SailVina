@@ -1,5 +1,6 @@
 import os
-import sys
+
+from tools.file_path import para_file
 
 
 class Configer(object):
@@ -12,8 +13,8 @@ class Configer(object):
         """
         如果第一次打开该软件，创建para.txt文件
         """
-        if not os.path.exists(os.path.realpath(sys.argv[0]) + os.sep + ".." + os.sep + "para.txt"):
-            with open(os.path.realpath(sys.argv[0]) + os.sep + ".." + os.sep + "para.txt", "w") as f:
+        if not os.path.exists(para_file):
+            with open(para_file, "w") as f:
                 initial_value = "center_x=0.0\n" \
                                 "center_y=0.0\n" \
                                 "center_z=0.0\n" \
@@ -28,22 +29,29 @@ class Configer(object):
                                 "is_minimize=1\n" \
                                 "docking_times=1\n" \
                                 "complex_ligand_num=1\n" \
-                                "remain_ligand=0\n"
+                                "remain_ligand=0\n" \
+                                "fix_receptor=0\n" \
+                                "fix_method=None\n" \
+                                "preserve_charges=0\n" \
+                                "nphs=1\n" \
+                                "lps=1\n" \
+                                "waters=1\n" \
+                                "nonstdres=1\n"
                 f.write(initial_value)
 
     @staticmethod
     def get_para(para_text):
-        if not os.path.exists(os.path.realpath(sys.argv[0]) + os.sep + ".." + os.sep + "para.txt"):
+        if not os.path.exists(para_file):
             return ""
-        with open(os.path.realpath(sys.argv[0]) + os.sep + ".." + os.sep + "para.txt", "r") as f:
+        with open(para_file, "r") as f:
             for line in f.readlines():
                 if line.split("=")[0] == para_text:
-                    return line.split("=")[1].strip()
+                    return str(line.split("=")[1].strip())
             else:
                 return ""
 
     def save_para(self):
-        with open(os.path.realpath(sys.argv[0]) + os.sep + ".." + os.sep + "para.txt", "w") as f:
+        with open(para_file, "w") as f:
             for para in self.para_dict:
                 f.write("%s=%s\n" % (para, self.para_dict[para]))
 

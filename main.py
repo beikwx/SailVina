@@ -8,6 +8,7 @@ from tools.configer import Configer
 
 from sail_widget.tooltip import create_tooltip
 from sail_widget.tab1 import Tab1
+from sail_widget.set_config import SetConfig
 
 
 class MainWindows(object):
@@ -40,7 +41,7 @@ class MainWindows(object):
 
     def create_config_button(self):
         # 脚本配置
-        config_button = Button(self.main_window, text="脚本配置")
+        config_button = Button(self.main_window, text="脚本配置", command=self.set_config)
         config_button.place(x=CONFIG_BUTTON_X, y=CONFIG_BUTTON_Y, width=BUTTON_WIDTH)
         create_tooltip(config_button, "设置脚本所需路径")
 
@@ -116,12 +117,21 @@ class MainWindows(object):
         # 选项卡内容
         self.tab1_configer = Tab1(tab1, self.config)
 
+    def set_config(self):
+        SetConfig(self.main_window, self.config)
+
     def save_para(self):
         if messagebox.askokcancel("退出", "保存参数并退出软件？"):
-            self.config.para_dict["python_path"] = self.config.get_para("python_path")
-            self.config.para_dict["obabel_path"] = self.config.get_para("obabel_path")
+            self.config.para_dict["python_path"] = Configer.get_para("python_path")
+            self.config.para_dict["obabel_path"] = Configer.get_para("obabel_path")
+
+            # 保存各个标签的参数
             self.tab1_configer.save_para()
+
+            # 进行文件保存
             self.config.save_para()
+
+            # 关闭窗口
             self.main_window.destroy()
 
 

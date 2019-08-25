@@ -28,7 +28,14 @@ class SButton(object):
         filename = SFile().open_file(self.initial_dir, self.title, self.file_type, parent=self.parent)
         self.entry_text.set(filename)
 
-    def bind_open_file(self, entry_text, title, file_type, parent=""):
+    def bind_open_file(self, entry_text: str, title: str, file_type: str, parent=""):
+        """
+        给按钮绑定打开一个文件
+        :param entry_text: 打开后初始位置
+        :param title: 标题
+        :param file_type: 要打开的文件类型
+        :param parent: 在哪个控件上面显示，默认主窗口上
+        """
         self.entry_text = entry_text
         self.title = title
         self.file_type = file_type
@@ -40,7 +47,12 @@ class SButton(object):
         dir_name = SFile().open_dir(initial_dir=self.initial_dir, title=self.title)
         self.entry_text.set(dir_name)
 
-    def bind_open_dir(self, entry_text, title):
+    def bind_open_dir(self, entry_text: str, title: str):
+        """
+        给按钮绑定选择一个目录
+        :param entry_text: 打开后初始位置
+        :param title: 标题
+        """
         self.entry_text = entry_text
         self.title = title
         self.button.bind("<Button-1>", self._bind_open_dir)

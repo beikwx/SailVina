@@ -1,9 +1,14 @@
+import os
+
 from Bio.PDB.PDBParser import PDBParser
 from Bio.PDB import Structure, Model, Chain, Select
 from Bio.PDB import PDBIO
 from Bio import SeqIO
 import lxml.etree as et
 from urllib.request import urlopen
+
+from tools.configer import Configer
+from tools.file_path import prepare_receptor4_path
 
 
 def check_pdb_status(pdb_id):
@@ -24,6 +29,86 @@ def check_pdb_status(pdb_id):
         if status == 'OBSOLETE':
             current_pdb_id = df.attrib['replacedBy']
     return [status, current_pdb_id.lower()]
+
+
+def prepare_receptor(receptor: str, output_file: str,
+                     fix_method: str, preserve_charges: int,
+                     nphs: int, lps: int, waters: int, nonstdres: int):
+    """
+    使用ADT的prepareReceptor4准备受体。
+    :param receptor: 受体路径。比如D:/test/a.pdb
+    :param output_file: 输出路径。比如D:/test
+    :param fix_method: 修复方法。"bonds_hydrogens", "bonds", "hydrogens", "checkhydrogens", "None"
+    :param preserve_charges: 保留电荷。1或者0
+    :param nphs:合并非极性氢。1或者0
+    :param lps:合并电荷。1或者0
+    :param waters:去水。1或者0
+    :param nonstdres:去除非标准氨基酸。1或者0
+    """
+    u_para_list = []
+    if nphs:
+        u_para_list.append("nphs")
+    if lps:
+        u_para_list.append("lps")
+    if waters:
+        u_para_list.append("waters")
+    if nonstdres:
+        u_para_list.append("nonstdres")
+
+    u_paras = ""
+    for u_para in u_para_list:
+        if u_para == u_para_list[-1]:
+            u_paras += u_para
+            break
+        u_paras += u_para + "_"
+
+    # print(u_paras)
+
+    if preserve_charges:
+        # 保留电荷,做处理
+        if u_paras != "":
+            cmd = "%s %s -r %s -o %s -A %s -C -U %s -e" % (Configer.get_para("python_path"), prepare_receptor4_path,
+                                                           receptor, output_file,
+                                                           fix_method, u_paras)
+        # 保留电荷，不做处理
+        else:
+            cmd = "%s %s -r %s -o %s -A %s -C -e" % (Configer.get_para("python_path"), prepare_receptor4_path,
+                                                     receptor, output_file,
+                                                     fix_method)
+    else:
+        # 不保留电荷,做处理
+        if u_paras != "":
+            cmd = "%s %s -r %s -o %s -A %s -U %s -e" % (Configer.get_para("python_path"), prepare_receptor4_path,
+                                                        receptor, output_file,
+                                                        fix_method, u_paras)
+        # 不保留电荷，不处理
+        else:
+            cmd = "%s %s -r %s -o %s -A %s -e" % (Configer.get_para("python_path"), prepare_receptor4_path,
+                                                  receptor, output_file,
+                                                  fix_method)
+    exit_code = os.system(cmd)
+    if exit_code == 0:
+        print("------------------------------------------------------------")
+        print("%s准备成功" % receptor)
+        print("------------------------------------------------------------")
+    else:
+        print("------------------------------------------------------------")
+        print("%s准备失败，请尝试使用biopython进行修复。" % receptor)
+        print("------------------------------------------------------------")
+
+
+def get_receptors(receptors_root_path):
+    """
+    返回一个目录下面的所有受体，只支持pdb格式
+    :param receptors_root_path:
+    :return: 所有受体的名称列表
+    """
+    receptors = os.listdir(receptors_root_path)
+    receptors_name = []
+    for receptor_path in receptors:
+        if receptor_path.endswith(".pdb"):
+            receptors_name.append(os.path.split(receptor_path)[-1])
+    return receptors_name
 
 
 class ReceptorProcessor(object):
@@ -151,17 +236,18 @@ class ChainExtractor(object):
             return message
 
     @staticmethod
-    def extract_chain(structure: Structure, chain_ids: list, output_path: str):
+    def extract_chain(structure: Structure, chain_ids: list, output_file: str):
 
-        output_file = output_path + "/preped.pdb"
         ChainExtractor.structure = structure
 
+        # 如果为空则表示尝试修复后全部储存
         if len(chain_ids) == 0:
             io = PDBIO()
             io.set_structure(structure)
             io.save(output_file)
             return
 
+        # 存储特定链的选择器
         class ChainSelect(Select):
 
             def accept_model(self, model):
@@ -185,10 +271,4 @@ class ChainExtractor(object):
 
 
 if __name__ == '__main__':
-    # s = PDBParser().get_structure("3ln1", "D:/Desktop/3ln1.pdb")
-    # extractor = LigandExtractor(s, 0, "A", "CEL")
-    # extractor.extract_ligand("D:/Desktop")
-    chain_ex = ChainExtractor("D:/Desktop/2az5.pdb", "D:/Desktop")
-    judge = chain_ex.judge_homo()
-    if judge:
-        print(judge)
+    pass
