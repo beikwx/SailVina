@@ -8,14 +8,15 @@ from tools.s_file import *
 
 
 class SButton(object):
-    def __init__(self, root, text, x, y):
+    def __init__(self, root, text, x, y, width=None):
         self.root = root
         self.text = text
         self.x = x
         self.y = y
+        self.width = width
 
         self.button = Button(self.root, text=self.text)
-        self.button.place(x=self.x, y=self.y)
+        self.button.place(x=self.x, y=self.y, width=self.width)
 
         self.entry_text = None
         self.initial_dir = None
