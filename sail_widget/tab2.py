@@ -26,6 +26,23 @@ class Tab2(object):  # 配置config.txt
         self.root = tab
         self.config = config
 
+        # 需要保存的参数
+        self.center_x = None
+        self.center_y = None
+        self.center_z = None
+        self.size_x = None
+        self.size_y = None
+        self.size_z = None
+
+        self.exhaustiveness = None
+        self.num_modes = None
+        self.energy_range = None
+
+        self.read_config_entry = None
+        self.choose_raw_ligand_entry = None
+
+        self.output_config_entry = None
+
         # 创建分块内容
         self._create_main_frame()
         self._create_option_frame()
@@ -33,92 +50,92 @@ class Tab2(object):  # 配置config.txt
         self._create_output_frame()
 
         # 帮助按钮
-        self.help_button = HelpButton(root=self.root, help_text=TAB2_HELP_TEXT,
+        help_button = HelpButton(root=self.root, help_text=TAB2_HELP_TEXT,
                                       x=410, y=300, width=BUTTON_WIDTH)
-        create_tooltip(self.help_button.help_button, "获取帮助")
+        create_tooltip(help_button.help_button, "获取帮助")
 
     def _create_main_frame(self):
-        self.main_label_frame = LabelFrame(self.root, text="主要参数")
-        self.main_label_frame.place(x=10, y=10, width=320, height=120)
+        main_label_frame = LabelFrame(self.root, text="主要参数")
+        main_label_frame.place(x=10, y=10, width=320, height=120)
 
         # center_x
-        SLabel(self.main_label_frame, text="center_x = ",
+        SLabel(main_label_frame, text="center_x = ",
                x=10, y=5)
-        self.center_x = SEntry(self.main_label_frame, textvariable=StringVar(),
+        self.center_x = SEntry(main_label_frame, textvariable=StringVar(),
                                text=Configer.get_para("center_x"),
                                x=95, y=5, width=60)
         create_tooltip(self.center_x.entry, "对接位点的x坐标")
 
         # center_y
-        SLabel(self.main_label_frame, text="center_y = ",
+        SLabel(main_label_frame, text="center_y = ",
                x=10, y=35)
-        self.center_y = SEntry(self.main_label_frame, textvariable=StringVar(),
+        self.center_y = SEntry(main_label_frame, textvariable=StringVar(),
                                text=Configer.get_para("center_y"),
                                x=95, y=35, width=60)
         create_tooltip(self.center_y.entry, "对接位点的y坐标")
 
         # center_z
-        SLabel(self.main_label_frame, text="center_z = ", x=10, y=65)
-        self.center_z = SEntry(self.main_label_frame, textvariable=StringVar(),
+        SLabel(main_label_frame, text="center_z = ", x=10, y=65)
+        self.center_z = SEntry(main_label_frame, textvariable=StringVar(),
                                text=Configer.get_para("center_z"),
                                x=95, y=65, width=60)
         create_tooltip(self.center_z.entry, "对接位点的z坐标")
 
         # size_x
-        SLabel(self.main_label_frame, text="size_x = ",
+        SLabel(main_label_frame, text="size_x = ",
                x=175, y=5)
-        self.size_x = SEntry(self.main_label_frame, textvariable=StringVar(),
+        self.size_x = SEntry(main_label_frame, textvariable=StringVar(),
                              text=Configer.get_para("size_x"),
                              x=245, y=5, width=60)
         create_tooltip(self.size_x.entry, "对接位点的x方向大小")
 
         # size_y
-        SLabel(self.main_label_frame, text="size_y = ",
+        SLabel(main_label_frame, text="size_y = ",
                x=175, y=35)
-        self.size_y = SEntry(self.main_label_frame, textvariable=StringVar(),
+        self.size_y = SEntry(main_label_frame, textvariable=StringVar(),
                              text=Configer.get_para("size_y"),
                              x=245, y=35, width=60)
         create_tooltip(self.size_y.entry, "对接位点的y方向大小")
 
         # size_z
-        SLabel(self.main_label_frame, text="size_z = ",
+        SLabel(main_label_frame, text="size_z = ",
                x=175, y=65)
-        self.size_z = SEntry(self.main_label_frame, textvariable=StringVar(),
+        self.size_z = SEntry(main_label_frame, textvariable=StringVar(),
                              text=Configer.get_para("size_z"),
                              x=245, y=65, width=60)
         create_tooltip(self.size_z.entry, "对接位点的z方向大小")
 
     def _create_option_frame(self):
-        self.option_label_frame = LabelFrame(self.root, text="可选")
-        self.option_label_frame.place(x=340, y=10, width=240, height=120)
+        option_label_frame = LabelFrame(self.root, text="可选")
+        option_label_frame.place(x=340, y=10, width=240, height=120)
 
         # exhaustiveness
-        SLabel(self.option_label_frame, text="exhaustiveness = ",
+        SLabel(option_label_frame, text="exhaustiveness = ",
                x=10, y=5)
-        self.exhaustiveness = SEntry(self.option_label_frame, textvariable=StringVar(),
+        self.exhaustiveness = SEntry(option_label_frame, textvariable=StringVar(),
                                      text=Configer.get_para("exhaustiveness"),
                                      x=140, y=5, width=20)
         create_tooltip(self.exhaustiveness.entry, "搜索度，越大耗时越长，建议保持默认")
 
         # num_modes
-        SLabel(self.option_label_frame, text="num_modes = ",
+        SLabel(option_label_frame, text="num_modes = ",
                x=10, y=35)
-        self.num_modes = SEntry(self.option_label_frame, textvariable=StringVar(),
+        self.num_modes = SEntry(option_label_frame, textvariable=StringVar(),
                                 text=Configer.get_para("num_modes"),
                                 x=140, y=35, width=20)
         create_tooltip(self.num_modes.entry, "最多生成多少种结合模式")
 
         # energy_range
-        SLabel(self.option_label_frame, text="energy_range = ",
+        SLabel(option_label_frame, text="energy_range = ",
                x=10, y=65)
-        self.energy_range = SEntry(self.option_label_frame, textvariable=StringVar(),
+        self.energy_range = SEntry(option_label_frame, textvariable=StringVar(),
                                    text=Configer.get_para("energy_range"),
                                    x=140, y=65, width=20)
 
         create_tooltip(self.energy_range.entry, "最大最小结合模式能量差")
 
         # 恢复默认值
-        default_button = SButton(self.option_label_frame, text="默认", x=170, y=62, width=60)
+        default_button = SButton(option_label_frame, text="默认", x=170, y=62, width=60)
         default_button.button.bind("<Button-1>", self._change_default)
         create_tooltip(default_button.button, "恢复默认值")
 
@@ -128,53 +145,53 @@ class Tab2(object):  # 配置config.txt
         self.energy_range.textvariable.set(3)
 
     def _create_tools_frame(self):
-        self.tools_frame = LabelFrame(self.root, text="工具")
-        self.tools_frame.place(x=10, y=140, width=570, height=100)
+        tools_frame = LabelFrame(self.root, text="工具")
+        tools_frame.place(x=10, y=140, width=570, height=100)
 
         # 读取配置文件
-        self.read_config_button = SButton(self.tools_frame, "读取配置文件", 10, 10)
-        create_tooltip(self.read_config_button.button, "必须选择config.txt文件！")
-        self.read_config_entry = SEntry(root=self.tools_frame, textvariable=StringVar(),
+        read_config_button = SButton(tools_frame, "读取配置文件", 10, 10)
+        create_tooltip(read_config_button.button, "必须选择config.txt文件！")
+        self.read_config_entry = SEntry(root=tools_frame, textvariable=StringVar(),
                                         text=Configer.get_para("read_config"),
                                         x=100, y=14, width=360)
         create_tooltip(self.read_config_entry.entry, "你选择的config.txt文件位置")
-        self.read_config_button.bind_open_file(entry_text=self.read_config_entry.textvariable,
+        read_config_button.bind_open_file(entry_text=self.read_config_entry.textvariable,
                                                title="请选择config.txt文件",
                                                file_type="txt")
-        self.read_button = SButton(self.tools_frame, "读取到参数", 470, 10)
-        create_tooltip(self.read_button.button, "读取到上方")
-        self.read_button.button.bind("<Button-1>", self.read_config)
+        read_button = SButton(tools_frame, "读取到参数", 470, 10)
+        create_tooltip(read_button.button, "读取到上方")
+        read_button.button.bind("<Button-1>", self.read_config)
 
         # 自动生成盒子
-        self.choose_raw_ligand_button = SButton(self.tools_frame, "读取共晶配体", 10, 40)
-        create_tooltip(self.choose_raw_ligand_button.button, "必须选择共晶配体pdbqt文件！")
-        self.choose_raw_ligand_entry = SEntry(root=self.tools_frame, textvariable=StringVar(),
+        choose_raw_ligand_button = SButton(tools_frame, "读取共晶配体", 10, 40)
+        create_tooltip(choose_raw_ligand_button.button, "必须选择共晶配体pdbqt文件！")
+        self.choose_raw_ligand_entry = SEntry(root=tools_frame, textvariable=StringVar(),
                                               text=Configer.get_para("choose_raw_ligand"),
                                               x=100, y=44, width=360)
-        self.choose_raw_ligand_button.bind_open_file(entry_text=self.choose_raw_ligand_entry.textvariable,
+        choose_raw_ligand_button.bind_open_file(entry_text=self.choose_raw_ligand_entry.textvariable,
                                                      title="请选择“共晶配体”PDBQT文件！",
                                                      file_type="pdbqt")
         create_tooltip(self.choose_raw_ligand_entry.entry, "你选择的共晶配体pdbqt文件位置")
-        self.gen_box_button = SButton(self.tools_frame, "计算对接位点", 470, 40)
-        create_tooltip(self.gen_box_button.button, "自动计算对接位点，该对接位点为共晶配体的"
+        gen_box_button = SButton(tools_frame, "计算对接位点", 470, 40)
+        create_tooltip(gen_box_button.button, "自动计算对接位点，该对接位点为共晶配体的"
                                                    "最小外切正方体，结果仅供参考。")
-        self.gen_box_button.button.bind("<Button-1>", self.gen_box)
+        gen_box_button.button.bind("<Button-1>", self.gen_box)
 
     def _create_output_frame(self):
-        self.output_frame = LabelFrame(self.root, text="输出配置文件")
-        self.output_frame.place(x=10, y=250, width=570, height=50)
+        output_frame = LabelFrame(self.root, text="输出配置文件")
+        output_frame.place(x=10, y=250, width=570, height=50)
 
         # 输出配置文件
-        self.output_config_button = SButton(self.output_frame, "选择输出目录", 10, 0)
-        create_tooltip(self.output_config_button.button, "选择config.txt输出的目录")
-        self.output_config_entry = SEntry(root=self.output_frame, textvariable=StringVar(),
+        output_config_button = SButton(output_frame, "选择输出目录", 10, 0)
+        create_tooltip(output_config_button.button, "选择config.txt输出的目录")
+        self.output_config_entry = SEntry(root=output_frame, textvariable=StringVar(),
                                           text=Configer.get_para("output_config"),
                                           x=100, y=4, width=360)
         create_tooltip(self.output_config_entry.entry, "输出config.txt文件的位置")
-        self.output_config_button.bind_open_dir(self.output_config_entry.textvariable, title="选择输出目录")
-        self.gen_config_button = SButton(self.output_frame, "输出", 470, 0)
-        create_tooltip(self.gen_config_button.button, "开始输出")
-        self.gen_config_button.button.bind("<Button-1>", self.output_config)
+        output_config_button.bind_open_dir(self.output_config_entry.textvariable, title="选择输出目录")
+        gen_config_button = SButton(output_frame, "输出", 470, 0)
+        create_tooltip(gen_config_button.button, "开始输出")
+        gen_config_button.button.bind("<Button-1>", self.output_config)
 
     def read_config(self, event):
         # 判断是否是config.txt
@@ -206,7 +223,7 @@ class Tab2(object):  # 配置config.txt
                 elif para_name == "":
                     continue
                 else:
-                    messagebox.showwarning("未知参数！", "包含未知参数\"%s\"" % para_name)
+                    messagebox.showwarning("未知参数！", '包含未知参数\"%s\"' % para_name)
                     continue
 
     def output_config(self, event):
@@ -217,8 +234,9 @@ class Tab2(object):  # 配置config.txt
         size_z = float(self.size_z.textvariable.get())
 
         box_size = size_x * size_y * size_z
-        if box_size >= 27000:
-            messagebox.showerror("错误！", "盒子总大小应小于27000，当前%.2f，请减小盒子大小！" % box_size)
+        if box_size > 27000:
+            messagebox.showerror("错误！", "盒子总大小不大于27000，"
+                                        "当前%.1f，请减小盒子大小！" % box_size)
             return
 
         if self.output_config_entry.textvariable.get() == "":
@@ -272,4 +290,5 @@ class Tab2(object):  # 配置config.txt
 
         self.config.para_dict["read_config"] = self.read_config_entry.textvariable.get()
         self.config.para_dict["choose_raw_ligand"] = self.choose_raw_ligand_entry.textvariable.get()
+
         self.config.para_dict["output_config"] = self.output_config_entry.textvariable.get()

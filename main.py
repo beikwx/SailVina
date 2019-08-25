@@ -9,6 +9,7 @@ from tools.configer import Configer
 from sail_widget.tooltip import create_tooltip
 from sail_widget.tab1 import Tab1
 from sail_widget.tab2 import Tab2
+from sail_widget.tab3 import Tab3
 from sail_widget.set_config import SetConfig
 
 
@@ -22,6 +23,7 @@ class MainWindows(object):
         self.config = Configer()
         self.tab1_configer = None
         self.tab2_configer = None
+        self.tab3_configer = None
 
         # 如果第一次打开，创建参数文件
         Configer.first_open()
@@ -119,6 +121,7 @@ class MainWindows(object):
         # 选项卡内容
         self.tab1_configer = Tab1(tab1, self.config)
         self.tab2_configer = Tab2(tab2, self.config)
+        self.tab3_configer = Tab3(tab3, self.config)
 
     def set_config(self):
         SetConfig(self.main_window, self.config)
@@ -131,6 +134,7 @@ class MainWindows(object):
             # 保存各个标签的参数
             self.tab1_configer.save_para()
             self.tab2_configer.save_para()
+            self.tab3_configer.save_para()
 
             # 进行文件保存
             self.config.save_para()
