@@ -16,7 +16,6 @@ from sail_widget.s_toplevel import STopLevel
 from tools.text import *
 from tools.number import *
 from tools.check import *
-from tools.configer import Configer
 from tools.receptor_processor import *
 from tools.file_path import *
 
@@ -64,7 +63,7 @@ class Tab1(object):
         prepared_receptor_labelframe = LabelFrame(self.root, text="准备受体")
         prepared_receptor_labelframe.place(x=LEFT_X, y=130, width=FULL_NOTEBOOK_WIDTH, height=110)
 
-        # 第一排
+        # 第一排,选择受体
         choose_raw_receptor_button = SButton(prepared_receptor_labelframe,
                                              text="选择受体", x=LEFT_X, y=0)
         create_tooltip(choose_raw_receptor_button.button, "选择要进行准备的pdb受体")
@@ -80,7 +79,7 @@ class Tab1(object):
         get_info_button.button.bind("<Button-1>", self.getinfo)
         create_tooltip(get_info_button.button, "查看受体信息")
 
-        # 第二排
+        # 第二排，提取配体保存的路径
         ligand_save_path_button = SButton(prepared_receptor_labelframe,
                                           text="配体输出路径", x=10, y=30)
         create_tooltip(ligand_save_path_button.button, "选择提取的配体要保存的位置")
@@ -97,7 +96,7 @@ class Tab1(object):
         save_ligand_button.button.bind("<Button-1>", self.extract_ligand)
         create_tooltip(save_ligand_button.button, "提取受体中的配体")
 
-        # 第三排
+        # 第三排，准备受体
         save_prepared_receptor_button = SButton(prepared_receptor_labelframe,
                                                 text="受体输出路径", x=LEFT_X, y=60)
         create_tooltip(save_prepared_receptor_button.button, "选择准备后的受体保存路径")
@@ -373,14 +372,14 @@ class Tab1(object):
         download_receptor_labelframe.place(x=LEFT_X, y=LEFT_Y,
                                            width=FULL_NOTEBOOK_WIDTH, height=TAB1_LABEL_FRAME_HEIGHT)
 
-        # 第一排
+        # 第一排，输入pdbid
         SLabel(download_receptor_labelframe, "PDBID：", x=LEFT_X, y=0)
         self.pdb_id_entry = SEntry(download_receptor_labelframe, text_variable=StringVar(),
                                    text=Configer.get_para("pdbid"),
                                    x=70, y=0, width=50)
         create_tooltip(self.pdb_id_entry.entry, "请输入四位PDB的ID")
 
-        # 第二排
+        # 第二排，保存位置
         pdb_save_path_button = SButton(download_receptor_labelframe,
                                        text="选择保存的路径", x=LEFT_X, y=30)
         create_tooltip(pdb_save_path_button.button, "选择下载受体要保存的位置")
@@ -392,7 +391,7 @@ class Tab1(object):
         pdb_save_path_button.bind_open_dir(entry_text=self.pdb_save_path_entry.text_variable,
                                            title="选择要保存的路径")
 
-        # 第三排
+        # 第三排，开始下载
         download_pdb_button = SButton(download_receptor_labelframe,
                                       text="开始下载", x=LEFT_X, y=60)
         create_tooltip(download_pdb_button.button, "从Protein Data Bank下载受体")

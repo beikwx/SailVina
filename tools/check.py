@@ -45,6 +45,11 @@ class Check(object):
 
     @staticmethod
     def check_path(text: str):
+        """
+        检查路径，不为空，没有空格
+        :param text: 路径名
+        :return: 都没有返回真
+        """
         if text == "" or Check.has_space(text):
             return True
         return False
