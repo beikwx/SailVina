@@ -45,3 +45,29 @@ TAB3_HELP_TEXT = "本界面用于进行对接配体的格式转换\n\n" \
                  "由于格式转化调用的是obabel的格式转换功能，obabel转换成pdbqt文件会出现问题，导致苯环断裂" \
                  "等问题。所以当转换成pdbqt文件时，先通过obabel转换成pdb文件，再通过adt的方法转换成pdbqt格式，" \
                  "所以进度条会显示两遍。"
+
+TAB4_HELP_TEXT = "本界面用于调用vina进行分子对接\n\n" \
+                 "操作步骤\n" \
+                 "1.选择配体\n" \
+                 "2.选择受体\n" \
+                 "3.选择结果输出的文件夹\n" \
+                 "4.输入每个配体要对接的次数\n" \
+                 "5.点击开始对接\n\n" \
+                 "对接说明\n" \
+                 "1.选择的配体只能是pdbqt文件或者含有pdbqt文件的文件夹\n" \
+                 "2.选择的受体是一个文件夹，受体在文件夹中，必须命名为“preped.pdbqt”" \
+                 "否则无法识别，并且需要config.txt文件，否则无法对接。\n" \
+                 "如果要对多个受体进行对接，请选择包含这些受体文件夹的文件夹。比如要对接的" \
+                 "受体为A、B、C，分别为C:/receptors/A，C:/receptors/B，C:/receptors/C，选择" \
+                 "C:/receptors即可。"
+
+TAB7_HELP_TEXT = "SailVina\n\n" \
+                 "本软件由python的Tkinter开发，调用biopython（受体准备），mgltools（准备配体，受体）" \
+                 "，openbabel（格式转化，文件合并），rmsd（计算RMSD等）\n\n" \
+                 "开发者：beikwx\n" \
+                 "Bug及反馈邮箱：studyforever0225@gmail.com\n" \
+                 "Github开源地址：https://github.com/beikwx/SailVina\n" \
+                 "我的个人博客：https://beikwx.top/\n\n" \
+                 "感谢提出意见和bug反馈的各位同学，本人读研事情也比较多，平时偶尔用到分子对接，但是现在对接没有" \
+                 "一个好用的GUI，所以想编写这个软件一劳永逸，更新较慢，如果有好的想法希望多多交流。\n\n" \
+                 "Happy docking!"

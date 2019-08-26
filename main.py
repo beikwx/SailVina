@@ -10,6 +10,9 @@ from sail_widget.tooltip import create_tooltip
 from sail_widget.tab1 import Tab1
 from sail_widget.tab2 import Tab2
 from sail_widget.tab3 import Tab3
+from sail_widget.tab4 import Tab4
+
+from sail_widget.tab7 import Tab7
 from sail_widget.set_config import SetConfig
 
 
@@ -24,6 +27,9 @@ class MainWindows(object):
         self.tab1_configer = None
         self.tab2_configer = None
         self.tab3_configer = None
+        self.tab4_configer = None
+
+        self.tab7_configer = None
 
         # 如果第一次打开，创建参数文件
         Configer.first_open()
@@ -90,7 +96,7 @@ class MainWindows(object):
         # 分子对接
         tab4 = Frame(notebook)
 
-        # 提取分数
+        # 工具
         tab5 = Frame(notebook)
 
         # 生成复合物
@@ -122,6 +128,9 @@ class MainWindows(object):
         self.tab1_configer = Tab1(tab1, self.config)
         self.tab2_configer = Tab2(tab2, self.config)
         self.tab3_configer = Tab3(tab3, self.config)
+        self.tab4_configer = Tab4(tab4, self.config)
+
+        self.tab7_configer = Tab7(tab7)
 
     def set_config(self):
         SetConfig(self.main_window, self.config)
@@ -135,6 +144,7 @@ class MainWindows(object):
             self.tab1_configer.save_para()
             self.tab2_configer.save_para()
             self.tab3_configer.save_para()
+            self.tab4_configer.save_para()
 
             # 进行文件保存
             self.config.save_para()

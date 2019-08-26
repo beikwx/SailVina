@@ -64,3 +64,21 @@ class Check(object):
         if text == "" or Check.has_space(text):
             return True
         return False
+
+    @staticmethod
+    def check_config(dir_path):
+        """
+        判断一个路径中是否有config文件。名字包含config即可
+        :param dir_path: 含有config.txt等的文件夹
+        :return: 如果有，返回真
+        """
+        filenames = os.listdir(dir_path)
+        for filename in filenames:
+            if "config" in filename:
+                return True
+        else:
+            return False
+
+
+if __name__ == '__main__':
+    print(Check.check_config(r"D:\Vina_Dock\Proteins"))
