@@ -12,10 +12,9 @@ from sail_widget.s_button import SButton
 from sail_widget.s_checkbox import SCheckbutton
 from sail_widget.s_combobox import SCombbox
 
-from tools.configer import Configer
 from tools.text import *
-from tools.file_path import *
 from tools.check import Check
+from tools.format_convertor import *
 
 
 class Tab3(object):  # 准备配体
@@ -168,8 +167,10 @@ class Tab3(object):  # 准备配体
         convert_button.button.bind("<Button-1>", self._start_convert)
 
     def _start_convert(self, event):
-        obabel_path = Configer.get_para("obabel_path")
-        if not Check.check_obabel(obabel_path):
+        if not Check.check_obabel(Configer.get_para("obabel_path")):
+            return
+
+        if not Check.check_python(python_path):
             return
 
         input_files = self.choose_ligands_entry.textvariable.get()
@@ -220,9 +221,8 @@ class Tab3(object):  # 准备配体
             messagebox.showerror("输入错误！", "输出路径不存在！")
             return
 
-        python_path = Configer.get_para("python_path")
-        # 检查python路径是否正确
-        if not Check.check_python(python_path):
+        if input_format == output_format:
+            messagebox.showerror("错误！", "输入和输出格式不应相等！")
             return
 
         output_ligands = []
@@ -231,22 +231,14 @@ class Tab3(object):  # 准备配体
             ligand_name = ligand.split("/")[-1].split(".")[0] + "." + output_format
             output_ligands.append(output_path + "/" + ligand_name)
 
-        if input_format == output_format:
-            messagebox.showerror("错误！", "输入和输出格式不应相等！")
-            return
-
         self.progress["maximum"] = len(input_ligands)
 
         # 进行格式转换
         if input_format == "pdbqt":  # pdbqt->other
             # pdbqt->pdb
             if output_format == "pdb":
-                # adt执行pdbqt转pdb
                 i = 0
                 while i < len(input_ligands):
-                    command = "%s %s -f %s -o %s" % (python_path, pdbqt_to_pdb_path,
-                                                     input_ligands[i], output_ligands[i])
-
                     # 更改标签文字
                     label_text = "%i/%i" % (i + 1, len(input_ligands))
                     self.progress_label.label.configure(text=label_text)
@@ -256,13 +248,13 @@ class Tab3(object):  # 准备配体
                     self.progress["value"] = i + 1
                     self.progress.update()
 
-                    os.system(command)
+                    pdbqt_2_pdb(input_ligands[i], output_ligands[i])
                     i += 1
                 messagebox.showinfo("转换完成！", "成功将pdbqt转换成pdb！")
                 self.progress["value"] = 0
                 self.progress_label.label.configure(text="没有任务")
                 return
-
+            # pdbqt->other
             else:
                 # obabel转换成输出格式，先转成pdb
                 pdb_ligands = []
@@ -276,9 +268,6 @@ class Tab3(object):  # 准备配体
 
                 i = 0
                 while i < len(input_ligands):
-                    command = "%s %s -f %s -o %s" % (python_path, pdbqt_to_pdb_path,
-                                                     input_ligands[i], pdb_ligands[i])
-
                     label_text = "%i/%i" % (i + 1, len(input_ligands))
                     self.progress_label.label.configure(text=label_text)
                     self.progress_label.label.update()
@@ -286,13 +275,11 @@ class Tab3(object):  # 准备配体
                     self.progress["value"] = i + 1
                     self.progress.update()
 
-                    os.system(command)
+                    pdbqt_2_pdb(input_ligands[i], pdb_ligands[i])
                     i += 1
 
                 i = 0
                 while i < len(input_ligands):
-                    command = "%s %s -O %s" % (obabel_path, pdb_ligands[i], output_ligands[i])
-
                     # 更改标签文字
                     label_text = "%i/%i" % (i + 1, len(input_ligands))
                     self.progress_label.label.configure(text=label_text)
@@ -302,21 +289,20 @@ class Tab3(object):  # 准备配体
                     self.progress["value"] = i + 1 + len(input_ligands)
                     self.progress.update()
 
-                    os.system(command)
+                    pdb_2_other(pdb_ligands[i], output_ligands[i])
                     i += 1
+
+                # 删除临时pdb文件
                 shutil.rmtree(output_path + "/tmp")
                 messagebox.showinfo("转换完成！", "成功将pdbqt转换%s！" % output_format)
                 self.progress["value"] = 0
                 self.progress_label.label.configure(text="没有任务")
                 return
 
-        elif input_format == "pdb" or input_format == "mol2" and output_format == "pdbqt":  # pdb->pdbqt
-            print("使用ADT脚本将pdb转换成pdbqt")
+        # pdb/mol2->pdbqt
+        elif input_format == "pdb" or input_format == "mol2" and output_format == "pdbqt":
             i = 0
             while i < len(input_ligands):
-                command = "%s %s -l %s -o %s" % (python_path, pdb_to_pdbqt_path,
-                                                 input_ligands[i], output_ligands[i])
-
                 # 更改标签文字
                 label_text = "%i/%i" % (i + 1, len(input_ligands))
                 self.progress_label.label.configure(text=label_text)
@@ -326,16 +312,16 @@ class Tab3(object):  # 准备配体
                 self.progress["value"] = i + 1 + len(input_ligands)
                 self.progress.update()
 
-                os.system(command)
+                pdb_mol2_2_pdbqt(input_ligands[i], output_ligands[i])
                 i += 1
             messagebox.showinfo("转换完成！", "成功将%s转换pdbqt！" % input_format)
             self.progress["value"] = 0
             self.progress_label.label.configure(text="没有任务")
             return
 
-        else:  # 输入不是pdbqt
-            if output_format == "pdbqt":
-                # obabel转换成输出格式，先转成pdb
+        else:
+            # mol/smi->pdbqt
+            if input_format == "mol" or input_format == "smi" and output_format == "pdbqt":
                 pdb_ligands = []
                 for ligand in input_ligands:
                     ligand_name = ligand.split("/")[-1].split(".")[0] + ".pdb"
@@ -347,10 +333,6 @@ class Tab3(object):  # 准备配体
 
                 i = 0
                 while i < len(input_ligands):
-                    command = "%s %s -O %s -p %s --gen3d --minimize --ff %s" % (obabel_path, input_ligands[i],
-                                                                                pdb_ligands[i],
-                                                                                ph, minimize)
-
                     label_text = "%i/%i" % (i + 1, len(input_ligands))
                     self.progress_label.label.configure(text=label_text)
                     self.progress_label.label.update()
@@ -358,14 +340,11 @@ class Tab3(object):  # 准备配体
                     self.progress["value"] = i + 1
                     self.progress.update()
 
-                    os.system(command)
+                    two_d_2_pdb(input_ligands[i], pdb_ligands[i], ph, minimize)
                     i += 1
 
                 i = 0
                 while i < len(input_ligands):
-                    command = "%s %s -l %s -o %s" % (python_path, pdb_to_pdbqt_path,
-                                                     pdb_ligands[i], output_ligands[i])
-
                     # 更改标签文字
                     label_text = "%i/%i" % (i + 1, len(input_ligands))
                     self.progress_label.label.configure(text=label_text)
@@ -375,22 +354,64 @@ class Tab3(object):  # 准备配体
                     self.progress["value"] = i + 1 + len(input_ligands)
                     self.progress.update()
 
-                    os.system(command)
+                    pdb_mol2_2_pdbqt(pdb_ligands[i], output_ligands[i])
                     i += 1
+                # 删除临时pdb文件
                 shutil.rmtree(output_path + "/tmp")
                 messagebox.showinfo("转换完成！", "成功将%s转换pdbqt！" % input_format)
                 self.progress["value"] = 0
                 self.progress_label.label.configure(text="没有任务")
                 return
+            # sdf->pdbqt
+            elif input_format == "sdf" and output_format == "pdbqt":
+                # 先转pdb
+                pdb_ligands = []
+                for ligand in input_ligands:
+                    ligand_name = ligand.split("/")[-1].split(".")[0] + ".pdb"
+                    pdb_ligands.append(output_path + "/tmp/" + ligand_name)
+
+                self.progress["maximum"] = len(input_ligands) * 2
+
+                os.mkdir(output_path + "/tmp")  # 创建临时文件夹
+
+                i = 0
+                while i < len(input_ligands):
+                    label_text = "%i/%i" % (i + 1, len(input_ligands))
+                    self.progress_label.label.configure(text=label_text)
+                    self.progress_label.label.update()
+
+                    self.progress["value"] = i + 1
+                    self.progress.update()
+
+                    three_d_2_pdb(input_ligands[i], pdb_ligands[i], is_minimize, minimize)
+                    i += 1
+
+                i = 0
+                while i < len(input_ligands):
+                    # 更改标签文字
+                    label_text = "%i/%i" % (i + 1, len(input_ligands))
+                    self.progress_label.label.configure(text=label_text)
+                    self.progress_label.label.update()
+
+                    # 更新进度条
+                    self.progress["value"] = i + 1 + len(input_ligands)
+                    self.progress.update()
+
+                    pdb_mol2_2_pdbqt(pdb_ligands[i], output_ligands[i])
+                    i += 1
+                # 删除临时pdb文件
+                shutil.rmtree(output_path + "/tmp")
+                messagebox.showinfo("转换完成！", "成功将%s转换pdbqt！" % input_format)
+                self.progress["value"] = 0
+                self.progress_label.label.configure(text="没有任务")
+                return
+            # mol/smi/sdf/mol2/pdb->pdb/sdf/mol2/xyz
             else:
                 if gen3d == "1":
+                    # 3D并最小化
                     if is_minimize == "1":
                         i = 0
                         while i < len(input_ligands):
-                            command = "%s %s -O %s -p %s --gen3d --minimize --ff %s" % (obabel_path, input_ligands[i],
-                                                                                        output_ligands[i],
-                                                                                        ph, minimize)
-
                             label_text = "%s/%s" % (i + 1, len(input_ligands))
                             self.progress_label.label.configure(text=label_text)
                             self.progress_label.label.update()
@@ -398,18 +419,15 @@ class Tab3(object):  # 准备配体
                             self.progress["value"] = i + 1
                             self.progress.update()
 
-                            os.system(command)
+                            ob_3d_min(input_ligands[i], output_ligands[i], ph, minimize)
                             i += 1
                         messagebox.showinfo("成功！", "成功将%s转换成%s！" % (input_format, output_format))
                         self.progress["value"] = 0
                         self.progress_label.label.configure(text="没有任务")
+                    # 3D不最小化
                     else:
                         i = 0
                         while i < len(input_ligands):
-                            command = "%s %s -O %s -p %s --gen3d" % (obabel_path, input_ligands[i],
-                                                                     output_ligands[i],
-                                                                     ph)
-
                             label_text = "%s/%s" % (i + 1, len(input_ligands))
                             self.progress_label.label.configure(text=label_text)
                             self.progress_label.label.update()
@@ -417,19 +435,16 @@ class Tab3(object):  # 准备配体
                             self.progress["value"] = i + 1
                             self.progress.update()
 
-                            os.system(command)
+                            ob_3d(input_ligands[i], output_ligands[i], ph)
                             i += 1
                         messagebox.showinfo("成功！", "成功将%s转换成%s！" % (input_format, output_format))
                         self.progress["value"] = 0
                         self.progress_label.label.configure(text="没有任务")
                 else:
+                    # 不3D并最小化
                     if is_minimize == "1":
                         i = 0
                         while i < len(input_ligands):
-                            command = "%s %s -O %s -p %s --minimize --ff %s" % (obabel_path, input_ligands[i],
-                                                                                output_ligands[i],
-                                                                                ph, minimize)
-
                             label_text = "%s/%s" % (i + 1, len(input_ligands))
                             self.progress_label.label.configure(text=label_text)
                             self.progress_label.label.update()
@@ -437,18 +452,15 @@ class Tab3(object):  # 准备配体
                             self.progress["value"] = i + 1
                             self.progress.update()
 
-                            os.system(command)
+                            ob_min(input_ligands[i], output_ligands[i], ph, minimize)
                             i += 1
                         messagebox.showinfo("成功！", "成功将%s转换成%s！" % (input_format, output_format))
                         self.progress["value"] = 0
                         self.progress_label.label.configure(text="没有任务")
+                    # 不3D也不最小化
                     else:
                         i = 0
                         while i < len(input_ligands):
-                            command = "%s %s -O %s -p %s" % (obabel_path, input_ligands[i],
-                                                             output_ligands[i],
-                                                             ph)
-
                             label_text = "%s/%s" % (i + 1, len(input_ligands))
                             self.progress_label.label.configure(text=label_text)
                             self.progress_label.label.update()
@@ -456,7 +468,7 @@ class Tab3(object):  # 准备配体
                             self.progress["value"] = i + 1
                             self.progress.update()
 
-                            os.system(command)
+                            ob(input_ligands[i], output_ligands[i])
                             i += 1
                         messagebox.showinfo("成功！", "成功将%s转换成%s！" % (input_format, output_format))
                         self.progress["value"] = 0

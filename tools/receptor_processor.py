@@ -9,6 +9,7 @@ from urllib.request import urlopen
 
 from tools.configer import Configer
 from tools.file_path import prepare_receptor4_path
+from tools.check import Check
 
 
 def check_pdb_status(pdb_id):
