@@ -18,7 +18,8 @@ from tools.format_convertor import pdbqt_2_pdb
 from tools.format_convertor import ob_join, ob, extract_pdbqt
 
 
-class Tab6(object):  # 复合
+# 复合
+class Tab6(object):
 
     def __init__(self, tab, config):
         self.root = tab
@@ -30,6 +31,7 @@ class Tab6(object):  # 复合
         self.remain_ligand = None
         self.choose_ligands_entry = None
         self.choose_output_entry = None
+        self.extract_output_entry = None
 
         self._choose_ligand_frame()
         self._choose_protein_frame()
@@ -41,8 +43,8 @@ class Tab6(object):  # 复合
         create_tooltip(help_button.help_button, "获取帮助")
 
     def _choose_ligand_frame(self):
-        choose_ligand_labelframe = LabelFrame(self.root, text="选择配体")
-        choose_ligand_labelframe.place(x=10, y=10, width=570, height=85)
+        choose_ligand_labelframe = LabelFrame(self.root, text="选择/提取配体")
+        choose_ligand_labelframe.place(x=10, y=10, width=570, height=120)
 
         # 选择输入配体的格式
         SLabel(root=choose_ligand_labelframe, text="输入格式：",
@@ -61,16 +63,10 @@ class Tab6(object):  # 复合
                                                text=Configer.get_para("complex_ligand_num"),
                                                x=205, y=2, width=20)
         create_tooltip(self.complex_ligand_num_entry.entry, "只针对多构象pdbqt文件。输入"
-                                                            "要进行复合的构象")
+                                                            "要进行复合或者提取的构象。"
+                                                            "如果为0则全部提取/复合")
         SLabel(root=choose_ligand_labelframe, text="个构象",
                x=230, y=0)
-
-        # 是否保留提取配体
-        self.remain_ligand = SCheckbutton(choose_ligand_labelframe,
-                                          text="保留提取构象", variable=StringVar(),
-                                          value=Configer.get_para("remain_ligand"),
-                                          x=280, y=0)
-        create_tooltip(self.remain_ligand.checkbutton, "保留提取或者转换的构象。")
 
         # 选择配体
         choose_ligands_button = SButton(choose_ligand_labelframe, text="选择单/多个配体", x=10, y=30)
@@ -87,9 +83,24 @@ class Tab6(object):  # 复合
         choose_ligand_dir_button.bind_open_dir(entry_text=self.choose_ligands_entry.textvariable,
                                                title="选择包含配体文件的文件夹")
 
+        # 选择单独输出配体文件夹
+        choose_output_button = SButton(choose_ligand_labelframe, text="提取配体输出路径", x=10, y=65)
+        create_tooltip(choose_output_button.button, "单独提取配体，选择要输出的文件夹。")
+        self.extract_output_entry = SEntry(choose_ligand_labelframe,
+                                           textvariable=StringVar(),
+                                           text=Configer.get_para("extract_pdbqt_dir"),
+                                           x=120, y=65 + 3, width=340)
+        create_tooltip(self.extract_output_entry.entry, "输出的文件夹")
+        choose_output_button.bind_open_dir(entry_text=self.extract_output_entry.textvariable,
+                                           title="选择提取配体输出的文件夹")
+        extract_button = SButton(choose_ligand_labelframe, text="提取选定的配体",
+                                 x=470, y=65)
+        extract_button.button.bind("<Button-1>", self.extract)
+        create_tooltip(extract_button.button, "提取配体")
+
     def _choose_protein_frame(self):
         choose_protein_labelframe = LabelFrame(self.root, text="选择受体")
-        choose_protein_labelframe.place(x=10, y=100, width=570, height=50)
+        choose_protein_labelframe.place(x=10, y=135, width=570, height=50)
 
         choose_proteins = SButton(root=choose_protein_labelframe, text="选择受体", x=10, y=0)
         create_tooltip(choose_proteins.button, "选择pdbqt格式的受体")
@@ -102,7 +113,7 @@ class Tab6(object):  # 复合
 
     def _choose_output_frame(self):
         choose_output_labelframe = LabelFrame(self.root, text="复合物输出")
-        choose_output_labelframe.place(x=10, y=155, width=570, height=50)
+        choose_output_labelframe.place(x=10, y=190, width=570, height=50)
 
         choose_output = SButton(root=choose_output_labelframe, text="选择输出文件夹", x=10, y=0)
         create_tooltip(choose_output.button, "选择复合物输出目录")
@@ -114,7 +125,7 @@ class Tab6(object):  # 复合
                                     title="选择复合物输出的文件夹")
 
     def _start_join(self):
-        y = 220
+        y = 250
         join_button = SButton(root=self.root, text="结合", x=10, y=y)
         create_tooltip(join_button.button, "将配体和受体结合成一个文件")
         join_button.button.bind("<Button-1>", self._join)
@@ -125,10 +136,17 @@ class Tab6(object):  # 复合
 
         self.progress_label = SLabel(self.root, text="没有任务", x=510, y=y)
 
-        text_y = 256
+        text_y = 286
         current_ligand_frame = Frame(self.root, width=400, height=40)
         current_ligand_frame.place(x=10, y=text_y)
         self.current_ligand = SLabel(root=current_ligand_frame, text="", x=0, y=0)
+
+        # 是否保留提取配体
+        self.remain_ligand = SCheckbutton(self.root
+                                          , text="保留提取构象", variable=StringVar(),
+                                          value=Configer.get_para("remain_ligand"),
+                                          x=10, y=text_y + 20)
+        create_tooltip(self.remain_ligand.checkbutton, "保留提取或者转换的构象。")
 
     def _join(self, event):
         input_format = self.input_format.textvariable.get()
@@ -160,8 +178,8 @@ class Tab6(object):  # 复合
         except ValueError:
             messagebox.showerror("错误！", "提取的构象必须是数字！")
             return
-        if num <= 0:
-            messagebox.showerror("错误！", "提取构象应该大于0")
+        if num < 0:
+            messagebox.showerror("错误！", "提取构象至少大于0！")
             return
 
         # 输出路径不存在则创建
@@ -224,11 +242,12 @@ class Tab6(object):  # 复合
                         pdbqt_2_pdb(ligand, pdb_ligand)
                         ligands.append(pdb_ligand)
                     else:
-                        output_pdbqt = extract_pdbqt(ligand, output_dir, num)
-                        output_pdb = output_dir + "/" + ligand.split(".")[0].split("/")[-1] + "_" + str(num) + ".pdb"
-                        pdbqt_2_pdb(output_pdbqt, output_pdb)
-                        os.remove(output_pdbqt)
-                        ligands.append(output_pdb)
+                        output_pdbqts = extract_pdbqt(ligand, output_dir, num)
+                        for output_pdbqt in output_pdbqts:
+                            output_pdb = output_pdbqt[:-2]
+                            pdbqt_2_pdb(output_pdbqt, output_pdb)
+                            os.remove(output_pdbqt)
+                            ligands.append(output_pdb)
         else:
             pdb_ligands = []
             # 全部转换成pdb格式
@@ -275,6 +294,9 @@ class Tab6(object):  # 复合
 
         self.current_ligand.label.configure(text="")
         self.current_ligand.label.update()
+
+    def extract(self, event):
+        pass
 
     def save_para(self):
         self.config.para_dict["complex_ligand_format"] = self.input_format.textvariable.get()

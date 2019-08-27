@@ -114,35 +114,56 @@ def extract_pdbqt(pdbqt_file, output_dir, index: int):
     :param pdbqt_file: 输入的多构象pdbqt文件
     :param output_dir: 输出文件夹
     :param index: 提取第几个。如果为0则提取全部。
+    :return 输出的文件列表
     """
+    output_files = []
     if index == 0:
-        pass
-    else:
+        first_lines, last_lines = read_models(pdbqt_file)
         with open(pdbqt_file) as f:
-            first_lines = []
-            last_lines = []
-            for (line_num, line_value) in enumerate(f):
-                if line_value.startswith("MODEL"):
-                    first_lines.append(line_num)
-                if line_value == "ENDMDL\n":
-                    last_lines.append(line_num)
+            i = 0
+            while i < len(first_lines):
+                f.seek(0)
+                output_pdbqt = output_dir + "/" + pdbqt_file.split(".")[0].split("/")[-1] + "_" \
+                               + str(i + 1) + ".pdbqt"
+                model = f.readlines()[first_lines[i]:last_lines[i] + 1]
+                with open(output_pdbqt, "w") as writer:
+                    writer.writelines(model)
+                output_files.append(output_pdbqt)
+                i += 1
+        return output_files
 
-            # 如果选择构象大于实际构象
-            try:
-                first_line = first_lines[index - 1]
-                last_line = last_lines[index - 1] + 1
-                max_num = index
-            except IndexError:
-                first_line = first_lines[-1]
-                last_line = last_lines[-1] + 1
-                max_num = str(len(first_lines))
+    else:
+        first_lines, last_lines = read_models(pdbqt_file)
 
-            f.seek(0)
+        # 如果选择构象大于实际构象
+        try:
+            first_line = first_lines[index - 1]
+            last_line = last_lines[index - 1] + 1
+            max_num = index
+        except IndexError:
+            first_line = first_lines[-1]
+            last_line = last_lines[-1] + 1
+            max_num = str(len(first_lines))
+
+        with open(pdbqt_file) as f:
             splited_molecule = f.readlines()[first_line:last_line]
             output_pdbqt = output_dir + "/" + pdbqt_file.split(".")[0].split("/")[-1] + "_" + str(max_num) + ".pdbqt"
             with open(output_pdbqt, "w") as writer:
                 writer.writelines(splited_molecule)
-            return output_pdbqt
+            output_files.append(output_pdbqt)
+        return output_files
+
+
+def read_models(pdbqt_file):
+    with open(pdbqt_file) as f:
+        first_lines = []
+        last_lines = []
+        for (line_num, line_value) in enumerate(f):
+            if line_value.startswith("MODEL"):
+                first_lines.append(line_num)
+            if line_value == "ENDMDL\n":
+                last_lines.append(line_num)
+    return first_lines, last_lines
 
 
 def convert_result(cmd, output_file):
