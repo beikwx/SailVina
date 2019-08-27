@@ -79,7 +79,7 @@ class Tab3(object):  # 准备配体
         # 第一排
         first_y = 0
         SLabel(root=choose_output_ligand_labelframe, text="输出格式：", x=10, y=first_y)
-        output_format_text = ("pdbqt", "pdb", "sdf", "mol2", "xyz")
+        output_format_text = ("pdbqt", "pdb", "sdf", "xyz")
         self.output_format = SCombbox(root=choose_output_ligand_labelframe, textvariable=StringVar(),
                                       values=output_format_text,
                                       default_value=Configer.get_para("output_format"),

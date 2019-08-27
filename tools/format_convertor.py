@@ -66,6 +66,14 @@ def three_d_2_pdb(input_file, output_file, is_minimize, minimize):
 
 
 def ob_3d_min(input_file, output_file, ph, minimize):
+    """
+    进行3d和最小化的格式转换。
+    :param input_file: 输入文件
+    :param output_file: 输出文件
+    :param ph: ph值
+    :param minimize:最小化方法
+    :return:
+    """
     two_d_2_pdb(input_file, output_file, ph, minimize)
 
 
@@ -80,8 +88,61 @@ def ob_min(input_file, output_file, ph, minimize):
 
 
 def ob(input_file, output_file):
+    """
+    单纯使用obabel进行格式转换，不进行任何操作
+    :param input_file: 输入文件
+    :param output_file: 输出文件
+    """
     cmd = "%s %s -O %s" % (obabel_path, input_file, output_file)
     convert_result(cmd, output_file)
+
+
+def ob_join(input_file1, input_file2, output_file):
+    """
+    合并两个文件到一个文件
+    :param input_file1: 第一个文件
+    :param input_file2: 第二个文件
+    :param output_file: 输出文件
+    """
+    cmd = "%s %s %s -j -O %s" % (obabel_path, input_file1, input_file2, output_file)
+    convert_result(cmd, output_file)
+
+
+def extract_pdbqt(pdbqt_file, output_dir, index: int):
+    """
+    提取多构象pdbqt文件中的某个或者全部
+    :param pdbqt_file: 输入的多构象pdbqt文件
+    :param output_dir: 输出文件夹
+    :param index: 提取第几个。如果为0则提取全部。
+    """
+    if index == 0:
+        pass
+    else:
+        with open(pdbqt_file) as f:
+            first_lines = []
+            last_lines = []
+            for (line_num, line_value) in enumerate(f):
+                if line_value.startswith("MODEL"):
+                    first_lines.append(line_num)
+                if line_value == "ENDMDL\n":
+                    last_lines.append(line_num)
+
+            # 如果选择构象大于实际构象
+            try:
+                first_line = first_lines[index - 1]
+                last_line = last_lines[index - 1] + 1
+                max_num = index
+            except IndexError:
+                first_line = first_lines[-1]
+                last_line = last_lines[-1] + 1
+                max_num = str(len(first_lines))
+
+            f.seek(0)
+            splited_molecule = f.readlines()[first_line:last_line]
+            output_pdbqt = output_dir + "/" + pdbqt_file.split(".")[0].split("/")[-1] + "_" + str(max_num) + ".pdbqt"
+            with open(output_pdbqt, "w") as writer:
+                writer.writelines(splited_molecule)
+            return output_pdbqt
 
 
 def convert_result(cmd, output_file):
@@ -89,13 +150,16 @@ def convert_result(cmd, output_file):
     执行命令，并查看是否成功
     :param cmd: 命令
     :param output_file:输出文件
+    :return 是否转换成功
     """
     exit_code = os.system(cmd)
     if exit_code == 0:
         print("------------------------------------------------------------")
         print("%s转换成功" % output_file)
         print("------------------------------------------------------------")
+        return True
     else:
         print("------------------------------------------------------------")
         print("%s准备失败，可能文件内部格式有误" % output_file)
         print("------------------------------------------------------------")
+        return False

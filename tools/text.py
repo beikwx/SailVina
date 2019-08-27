@@ -61,6 +61,16 @@ TAB4_HELP_TEXT = "本界面用于调用vina进行分子对接\n\n" \
                  "受体为A、B、C，分别为C:/receptors/A，C:/receptors/B，C:/receptors/C，选择" \
                  "C:/receptors即可。"
 
+TAB6_HELP_TEXT = "本界面用于生成配体-受体复合物\n\n" \
+                 "操作步骤\n" \
+                 "1.选择输入配体\n" \
+                 "2.选择受体（只支持pdbqt格式）\n" \
+                 "3.选择输入文件夹\n" \
+                 "4.点击“结合”\n\n" \
+                 "说明\n" \
+                 "1.对于对接生成的pdbqt文件，可以直接选择构象结合\n" \
+                 "2.脚本首先将pdbqt文件转换成pdb文件再结合生成pdb文件。"
+
 TAB7_HELP_TEXT = "SailVina\n\n" \
                  "本软件由python的Tkinter开发，调用biopython（受体准备），mgltools（准备配体，受体）" \
                  "，openbabel（格式转化，文件合并），rmsd（计算RMSD等）\n\n" \
