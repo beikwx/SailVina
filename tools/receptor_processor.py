@@ -122,6 +122,9 @@ def proteins2dir(proteins_dir):
     :return:生成的受体目录
     """
     receptors = __get_proteins(proteins_dir)
+    if len(receptors) == 0:
+        print("没有监测到受体文件！")
+        return
     receptors_dir = []
     for receptor in receptors:
         pdbqt_path = proteins_dir + os.sep + receptor

@@ -144,6 +144,10 @@ class Tab5(object):
             messagebox.showerror("路径不为空，不能包括空格！")
             return
 
+        if not os.path.exists(proteins_dir):
+            messagebox.showerror("错误", "选择文件夹不存在")
+            return
+
         proteins2dir(proteins_dir)
         messagebox.showinfo("成功", "文件成功移动！")
 
