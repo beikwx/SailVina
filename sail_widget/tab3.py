@@ -17,7 +17,8 @@ from tools.check import Check
 from tools.format_convertor import *
 
 
-class Tab3(object):  # 准备配体
+# 准备配体
+class Tab3(object):
 
     def __init__(self, tab, config):
         self.root = tab

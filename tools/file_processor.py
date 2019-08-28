@@ -2,6 +2,8 @@ import os
 import shutil
 import copy
 
+from tools.configer import Configer
+
 
 def pdbqt2dir(pdbqt_path):
     """
@@ -17,25 +19,18 @@ def pdbqt2dir(pdbqt_path):
     shutil.move(pdbqt_path, target_path)
 
 
-def read_para(para_name):
-    with open("para.txt", "r") as f:
-        for line in f.readlines():
-            if line.startswith(para_name):
-                return line.split("=")[1].strip()
-
-
 def gen_config_file(output_name, x, y, z, size):
     """
-
+    根据x,y,z,size生成config文件
     :param output_name: 输出路径文件名
     :param x: x坐标
     :param y: y坐标
     :param z: z坐标
     :param size: 盒子大小
     """
-    exhaustiveness = read_para("exhaustiveness")
-    num_modes = read_para("num_modes")
-    energy_range = read_para("energy_range")
+    exhaustiveness = Configer.get_para("exhaustiveness") if Configer.get_para("exhaustiveness") != "" else 8
+    num_modes = Configer.get_para("num_modes") if Configer.get_para("num_modes") != "" else 9
+    energy_range = Configer.get_para("energy_range") if Configer.get_para("energy_range") != "" else 3
     with open(output_name, "w") as f:
         f.writelines("center_x = " + str(x) + "\n")
         f.writelines("center_y = " + str(y) + "\n")
@@ -50,7 +45,7 @@ def gen_config_file(output_name, x, y, z, size):
 
 def get_config_files(protein_path):
     """
-
+    获取一个路径中的config文件
     :param protein_path: 蛋白文件夹路径，比如"./Proteins/01"
     :return: 蛋白的config文件列表
     """
@@ -62,18 +57,18 @@ def get_config_files(protein_path):
     return config_files
 
 
-def mk_output_dir(output_path):
+def mk_output_dir(file_path):
     """
     如果不存在就创建输出文件夹
-    :param output_path: 目标文件夹
+    :param file_path: 目标文件夹
     """
-    if not os.path.exists(output_path):
-        os.mkdir(output_path)
+    if not os.path.exists(file_path):
+        os.mkdir(file_path)
 
 
 def create_scores_file(output_file, scores_dict):
     """
-    创建
+    创建分数文件
     :param output_file: 输出目录
     :param scores_dict:分数字典
     """

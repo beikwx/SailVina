@@ -61,6 +61,8 @@ TAB4_HELP_TEXT = "本界面用于调用vina进行分子对接\n\n" \
                  "受体为A、B、C，分别为C:/receptors/A，C:/receptors/B，C:/receptors/C，选择" \
                  "C:/receptors即可。"
 
+TAB5_HELP_TEXT = "工具"
+
 TAB6_HELP_TEXT = "本界面用于生成配体-受体复合物\n\n" \
                  "操作步骤\n" \
                  "1.选择输入配体\n" \

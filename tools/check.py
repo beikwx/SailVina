@@ -79,6 +79,23 @@ class Check(object):
         else:
             return False
 
+    @staticmethod
+    def check_file(filename):
+        """
+
+        :param filename: 判断的名字
+        :return: 是文件返回1，不是返回0。文件不存在返回0
+        """
+        if os.path.isfile(filename):
+            if os.path.exists(filename):
+                return 1
+            else:
+                print(filename + "不存在")
+                return 0
+        else:
+            print(filename + "不是文件")
+            return 0
+
 
 if __name__ == '__main__':
     print(Check.check_config(r"D:\Vina_Dock\Proteins"))

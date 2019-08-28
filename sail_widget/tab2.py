@@ -14,7 +14,8 @@ from tools.number import *
 from tools.genbox import Box
 
 
-class Tab2(object):  # 配置config.txt
+# 配置config.txt
+class Tab2(object):
 
     def __init__(self, tab: Frame, config: Configer):
         """

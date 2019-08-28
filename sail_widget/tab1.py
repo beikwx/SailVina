@@ -23,6 +23,7 @@ from tools.file_path import *
 from tools.format_convertor import pdb_mol2_2_pdbqt
 
 
+# 准备受体
 class Tab1(object):
     chains = None
 

@@ -11,7 +11,7 @@ from sail_widget.tab1 import Tab1
 from sail_widget.tab2 import Tab2
 from sail_widget.tab3 import Tab3
 from sail_widget.tab4 import Tab4
-
+from sail_widget.tab5 import Tab5
 from sail_widget.tab6 import Tab6
 from sail_widget.tab7 import Tab7
 from sail_widget.set_config import SetConfig
@@ -29,7 +29,7 @@ class MainWindows(object):
         self.tab2_configer = None
         self.tab3_configer = None
         self.tab4_configer = None
-
+        self.tab5_configer = None
         self.tab6_configer = None
         self.tab7_configer = None
 
@@ -131,7 +131,7 @@ class MainWindows(object):
         self.tab2_configer = Tab2(tab2, self.config)
         self.tab3_configer = Tab3(tab3, self.config)
         self.tab4_configer = Tab4(tab4, self.config)
-
+        self.tab5_configer = Tab5(tab5, self.config)
         self.tab6_configer = Tab6(tab6, self.config)
         self.tab7_configer = Tab7(tab7)
 
@@ -148,7 +148,7 @@ class MainWindows(object):
             self.tab2_configer.save_para()
             self.tab3_configer.save_para()
             self.tab4_configer.save_para()
-
+            self.tab5_configer.save_para()
             self.tab6_configer.save_para()
 
             # 进行文件保存
