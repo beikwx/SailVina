@@ -16,7 +16,8 @@ from tools.file_processor import get_config_files
 from tools.dock_processor import vina_dock
 
 
-class Tab4(object):  # 分子对接
+# 分子对接
+class Tab4(object):
 
     def __init__(self, tab, config):
         self.root = tab
@@ -39,7 +40,7 @@ class Tab4(object):  # 分子对接
         self._start_docking()
 
         # 帮助按钮
-        help_button = HelpButton(root=self.root, help_text=TAB4_TEXT, x=410, y=300, width=80)
+        help_button = HelpButton(root=self.root, help_text=TAB4_HELP_TEXT, x=410, y=300, width=80)
         create_tooltip(help_button.help_button, "获取帮助")
 
     def _choose_ligand_frame(self):

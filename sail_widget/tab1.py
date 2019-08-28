@@ -20,6 +20,7 @@ from tools.number import *
 from tools.check import *
 from tools.receptor_processor import *
 from tools.file_path import *
+from tools.format_convertor import pdb_mol2_2_pdbqt
 
 
 class Tab1(object):
@@ -275,7 +276,7 @@ class Tab1(object):
                 return
             else:
                 # 没有勾选，直接转换单个文件为pdbqt文件
-                output_file = output_path + os.sep + os.path.split(input_file)[-1] + "qt"
+                output_file = output_path + os.sep + "preped.pdbqt"
                 prepare_receptor(input_file, output_file, fix_method, preserve_charges, nphs, lps, waters, nonstdres)
                 messagebox.showinfo("成功", "成功准备受体！\n注意：自动准备会删除DNA等非标准残基，结果仅供参考。")
                 return
@@ -420,9 +421,7 @@ class Tab1(object):
 
         input_ligand = self.output_path + os.sep + "%s_%s.pdb" % (self.chain_name, self.ligand_name)
         output_ligand = self.output_path + os.sep + "%s_%s.pdbqt" % (self.chain_name, self.ligand_name)
-        command = "%s %s -l %s -o %s" % (Configer.get_para("python_path"), pdb_to_pdbqt_path,
-                                         input_ligand, output_ligand)
-        os.system(command)
+        pdb_mol2_2_pdbqt(input_ligand, output_ligand)
         os.remove(input_ligand)
         messagebox.showinfo("提取成功！", "成功提取配体！")
 

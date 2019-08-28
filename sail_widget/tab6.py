@@ -39,7 +39,7 @@ class Tab6(object):
         self._start_join()
 
         # 帮助按钮
-        help_button = HelpButton(root=self.root, help_text=TAB5_TEXT, x=410, y=300, width=80)
+        help_button = HelpButton(root=self.root, help_text=TAB6_HELP_TEXT, x=410, y=300, width=80)
         create_tooltip(help_button.help_button, "获取帮助")
 
     def _choose_ligand_frame(self):
@@ -296,12 +296,67 @@ class Tab6(object):
         self.current_ligand.label.update()
 
     def extract(self, event):
-        pass
+        input_format = self.input_format.textvariable.get()
+        input_ligands_full = self.choose_ligands_entry.entry.get()
+        output_dir = self.extract_output_entry.entry.get()
+        choose_num = self.complex_ligand_num_entry.entry.get()
+
+        # 所有选择的路径和文件都不能为空。
+        if input_ligands_full == "" or output_dir == "":
+            messagebox.showerror("错误！", "输入不能为空！")
+            return
+
+        # 不能包括空格
+        if Check.has_space(input_ligands_full):
+            messagebox.showerror("错误！", "配体路径不能包含空格！")
+            return
+        if Check.has_space(output_dir):
+            messagebox.showerror("错误！", "输出路径不能包含空格！")
+            return
+
+        # 选择构象要是数字
+        try:
+            num = int(choose_num)
+        except ValueError:
+            messagebox.showerror("错误！", "提取的构象必须是数字！")
+            return
+        if num < 0:
+            messagebox.showerror("错误！", "提取构象至少大于0！")
+            return
+
+        # 输出路径不存在则创建
+        if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+        input_ligands = []
+
+        # 输入的配体
+        if input_ligands_full.endswith(";"):  # 如果是单个或者多个配体
+            if input_ligands_full.split(".")[-1][0:-1] != input_format:  # 格式不匹配
+                messagebox.showerror("错误！", "配体格式不是所选格式！")
+                return
+            input_ligands.extend(input_ligands_full.split(";")[0:-1])
+        elif os.path.isdir(input_ligands_full):  # 如果选择的是目录
+            list_file = os.listdir(input_ligands_full)
+            for file in list_file:
+                if file.endswith(input_format):
+                    input_ligands.append(input_ligands_full + "/" + file)
+            if len(input_ligands) == 0:
+                messagebox.showerror("错误！", "所选文件夹中不包含%s格式的配体！" % input_format)
+                return
+        else:
+            messagebox.showerror("错误！", "请检查输入的配体！")
+            return
+
+        for ligand in input_ligands:
+            extract_pdbqt(ligand, output_dir, num)
+        messagebox.showinfo("成功", "成功导入文件！")
 
     def save_para(self):
         self.config.para_dict["complex_ligand_format"] = self.input_format.textvariable.get()
         self.config.para_dict["complex_ligand_num"] = self.complex_ligand_num_entry.textvariable.get()
         self.config.para_dict["choose_complex_ligands"] = self.choose_ligands_entry.textvariable.get()
+        self.config.para_dict["extract_pdbqt_dir"] = self.extract_output_entry.textvariable.get()
         self.config.para_dict["remain_ligand"] = self.remain_ligand.variable.get()
         self.config.para_dict["choose_complex_proteins"] = self.choose_proteins_entry.textvariable.get()
         self.config.para_dict["choose_complex_output"] = self.choose_output_entry.textvariable.get()
