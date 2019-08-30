@@ -66,17 +66,33 @@ def mk_output_dir(file_path):
         os.mkdir(file_path)
 
 
-def create_scores_file(output_file, scores_dict):
+def create_scores_file(output_file, scores_dict, mode=0):
     """
     创建分数文件
     :param output_file: 输出目录
-    :param scores_dict:分数字典
+    :param scores_dict:分数字典，包含受体/配体/分数
+    :param mode 为0表示分数字典有受体，1表示只有配体。
     """
     with open(output_file, "w") as f:
-        f.write("receptor_name\tligand_name\tscores\n")
-        for receptor in scores_dict:
-            for ligand in scores_dict[receptor]:
-                f.write(receptor + "\t" + ligand + "\t" + scores_dict[receptor][ligand] + "\n")
+        if mode == 0:
+            f.write("receptor_name\tligand_name\tscores\n")
+            for receptor in scores_dict:
+                for ligand in scores_dict[receptor]:
+                    # 如果列表只有一个元素
+                    if not isinstance(scores_dict[receptor][ligand], list):
+                        f.write(receptor + "\t" + ligand + "\t" + scores_dict[receptor][ligand] + "\n")
+                    else:
+                        for score in scores_dict[receptor][ligand]:
+                            f.write(receptor + "\t" + ligand + "\t" + score + "\n")
+        if mode == 1:
+            f.write("ligand_name\tscores\n")
+            for ligand in scores_dict:
+                # 如果列表只有一个元素
+                if not isinstance(scores_dict[ligand], list):
+                    f.write(ligand + "\t" + scores_dict[ligand] + "\n")
+                else:
+                    for score in scores_dict[ligand]:
+                        f.write(ligand + "\t" + score + "\n")
 
 
 def get_best_scores(scores_dict):

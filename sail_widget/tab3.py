@@ -52,7 +52,7 @@ class Tab3(object):
         # 选择输入配体的格式
         SLabel(root=choose_ligand_labelframe, text="输入格式：",
                x=10, y=0)
-        input_format_text = ("mol", "smi", "sdf", "mol2", "pdb", "pdbqt")
+        input_format_text = ("mol", "sdf", "mol2", "pdb", "pdbqt")
         self.input_format = SCombbox(root=choose_ligand_labelframe, textvariable=StringVar(),
                                      values=input_format_text,
                                      default_value=Configer.get_para("input_format"),

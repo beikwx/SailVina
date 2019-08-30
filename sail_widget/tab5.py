@@ -4,14 +4,18 @@ from tkinter import messagebox
 from tkinter import *
 from tkinter.ttk import *
 
+from sail_widget.s_label import SLabel
 from sail_widget.s_button import HelpButton, SButton
 from sail_widget.tooltip import create_tooltip
 from sail_widget.s_entry import SEntry
+from sail_widget.s_toplevel import SMultiTopLevel
 
+from tools.read_scores import read_scores, read_folder_scores, read_root_folder_scores
 from tools.receptor_processor import gen_config, proteins2dir
 from tools.text import *
 from tools.configer import Configer
 from tools.check import Check
+from tools.file_processor import create_scores_file
 
 
 # 工具
@@ -79,7 +83,7 @@ class Tab5(object):
         move_button.button.bind("<Button-1>", self.move_file)
 
     def create_extract_scores(self):
-        extract_scores_labelframe = Labelframe(self.root, text="移动受体文件")
+        extract_scores_labelframe = Labelframe(self.root, text="提取分数")
         extract_scores_labelframe.place(x=10, y=155, width=570, height=50)
 
         choose_score = SButton(root=extract_scores_labelframe, text="选择单个文件", x=10, y=0)
@@ -152,9 +156,47 @@ class Tab5(object):
         messagebox.showinfo("成功", "文件成功移动！")
 
     def extract_score(self, event):
-        # TODO 提取分数
         score_file = self.choose_scores_entry.textvariable.get()
-        pass
+
+        if Check.check_path(score_file):
+            messagebox.showerror("错误", "路径不能为空或者包含空格！")
+            return
+
+        # 如果是单个pdbqt文件，弹出窗口直接显示结果。
+        if score_file.endswith(".pdbqt"):
+
+            scores = read_scores(score_file)
+
+            if len(scores) == 0:
+                messagebox.showerror("错误", "选择的文件中没有检测到分数！")
+                return
+
+            file_name = os.path.split(score_file)[-1][0:-6]
+            score_top = SMultiTopLevel(self.root, 600, 100, file_name).toplevel
+            SLabel(score_top, text="当前文件:" + file_name, x=10, y=0)
+
+            SLabel(score_top, text="number", x=10, y=30)
+            SLabel(score_top, text="scores", x=10, y=60)
+            i = 0
+            while i < len(scores):
+                SLabel(score_top, text=str(i + 1), x=80 + (50 * i), y=30)
+                SLabel(score_top, text=scores[i], x=80 + (50 * i), y=60)
+                i += 1
+
+        # 如果是文件夹，在该文件夹中生成分数文件
+        elif os.path.isdir(score_file):
+            output_file = score_file + os.sep + "scores.txt"
+            # 如果是子目录，没有受体，只输出分数最高的
+            if os.listdir(score_file)[0].endswith(".pdbqt"):
+                scores = read_folder_scores(score_file, mode=1)
+                create_scores_file(output_file, scores, mode=1)
+            else:
+                scores = read_root_folder_scores(score_file, mode=1)
+                create_scores_file(output_file, scores, mode=0)
+            messagebox.showinfo("保存成功！", "保存分数文件到%s" % output_file)
+        else:
+            messagebox.showerror("输入错误", "请选择pdbqt文件或者选择文件夹！")
+            return
 
     def save_para(self):
         self.config.para_dict["refer_ligand"] = self.choose_ligand_entry.textvariable.get()
