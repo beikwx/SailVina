@@ -194,7 +194,7 @@ class Tab3(object):
             list_file = os.listdir(input_files)
             for file in list_file:
                 if file.endswith(input_format):
-                    input_ligands.append(input_files + "/" + file)
+                    input_ligands.append(input_files + os.sep + file)
             if len(input_ligands) == 0:
                 messagebox.showerror("错误！", "所选文件夹中不包含选择格式的配体！")
                 return
@@ -229,8 +229,8 @@ class Tab3(object):
         output_ligands = []
 
         for ligand in input_ligands:
-            ligand_name = ligand.split("/")[-1].split(".")[0] + "." + output_format
-            output_ligands.append(output_path + "/" + ligand_name)
+            ligand_name = ligand.split(os.sep)[-1].split(".")[0] + "." + output_format
+            output_ligands.append(output_path + os.sep + ligand_name)
 
         self.progress["maximum"] = len(input_ligands)
 
@@ -260,12 +260,12 @@ class Tab3(object):
                 # obabel转换成输出格式，先转成pdb
                 pdb_ligands = []
                 for ligand in input_ligands:
-                    ligand_name = ligand.split("/")[-1].split(".")[0] + ".pdb"
-                    pdb_ligands.append(output_path + "/tmp/" + ligand_name)
+                    ligand_name = ligand.split(os.sep)[-1].split(".")[0] + ".pdb"
+                    pdb_ligands.append(output_path + os.sep + "tmp" + os.sep + ligand_name)
 
                 self.progress["maximum"] = len(input_ligands) * 2
 
-                os.mkdir(output_path + "/tmp")  # 创建临时文件夹
+                os.mkdir(output_path + os.sep + "tmp")  # 创建临时文件夹
 
                 i = 0
                 while i < len(input_ligands):
@@ -294,7 +294,7 @@ class Tab3(object):
                     i += 1
 
                 # 删除临时pdb文件
-                shutil.rmtree(output_path + "/tmp")
+                shutil.rmtree(output_path + os.sep + "tmp")
                 messagebox.showinfo("转换完成！", "成功将pdbqt转换%s！" % output_format)
                 self.progress["value"] = 0
                 self.progress_label.label.configure(text="没有任务")
@@ -325,12 +325,12 @@ class Tab3(object):
             if input_format == "mol" or input_format == "smi" and output_format == "pdbqt":
                 pdb_ligands = []
                 for ligand in input_ligands:
-                    ligand_name = ligand.split("/")[-1].split(".")[0] + ".pdb"
-                    pdb_ligands.append(output_path + "/tmp/" + ligand_name)
+                    ligand_name = ligand.split(os.sep)[-1].split(".")[0] + ".pdb"
+                    pdb_ligands.append(output_path + os.sep + "tmp" + os.sep + ligand_name)
 
                 self.progress["maximum"] = len(input_ligands) * 2
 
-                os.mkdir(output_path + "/tmp")  # 创建临时文件夹
+                os.mkdir(output_path + os.sep + "tmp")  # 创建临时文件夹
 
                 i = 0
                 while i < len(input_ligands):
@@ -358,7 +358,7 @@ class Tab3(object):
                     pdb_mol2_2_pdbqt(pdb_ligands[i], output_ligands[i])
                     i += 1
                 # 删除临时pdb文件
-                shutil.rmtree(output_path + "/tmp")
+                shutil.rmtree(output_path + os.sep + "tmp")
                 messagebox.showinfo("转换完成！", "成功将%s转换pdbqt！" % input_format)
                 self.progress["value"] = 0
                 self.progress_label.label.configure(text="没有任务")
@@ -368,12 +368,12 @@ class Tab3(object):
                 # 先转pdb
                 pdb_ligands = []
                 for ligand in input_ligands:
-                    ligand_name = ligand.split("/")[-1].split(".")[0] + ".pdb"
-                    pdb_ligands.append(output_path + "/tmp/" + ligand_name)
+                    ligand_name = ligand.split(os.sep)[-1].split(".")[0] + ".pdb"
+                    pdb_ligands.append(output_path + os.sep + "tmp" + os.sep + ligand_name)
 
                 self.progress["maximum"] = len(input_ligands) * 2
 
-                os.mkdir(output_path + "/tmp")  # 创建临时文件夹
+                os.mkdir(output_path + os.sep + "tmp")  # 创建临时文件夹
 
                 i = 0
                 while i < len(input_ligands):
@@ -401,7 +401,7 @@ class Tab3(object):
                     pdb_mol2_2_pdbqt(pdb_ligands[i], output_ligands[i])
                     i += 1
                 # 删除临时pdb文件
-                shutil.rmtree(output_path + "/tmp")
+                shutil.rmtree(output_path + os.sep + "tmp")
                 messagebox.showinfo("转换完成！", "成功将%s转换pdbqt！" % input_format)
                 self.progress["value"] = 0
                 self.progress_label.label.configure(text="没有任务")

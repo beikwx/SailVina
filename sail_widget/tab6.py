@@ -203,7 +203,7 @@ class Tab6(object):
             list_file = os.listdir(input_ligands_full)
             for file in list_file:
                 if file.endswith(input_format):
-                    input_ligands.append(input_ligands_full + "/" + file)
+                    input_ligands.append(input_ligands_full + os.sep + file)
             if len(input_ligands) == 0:
                 messagebox.showerror("错误！", "所选文件夹中不包含%s格式的配体！" % input_format)
                 return
@@ -223,7 +223,7 @@ class Tab6(object):
         self.progress_label.label.update()
 
         # 将受体pdbqt转成pdb
-        input_pdb = output_dir + "/" + input_receptor.split(".")[0].split("/")[-1] + ".pdb"
+        input_pdb = output_dir + os.sep + input_receptor.split(".")[0].split(os.sep)[-1] + ".pdb"
         pdbqt_2_pdb(input_receptor, input_pdb)
 
         ligands = []
@@ -238,7 +238,7 @@ class Tab6(object):
                     line = f.readline()
                     if "MODEL" not in line:
                         # 只有一个，直接转换成pdb
-                        pdb_ligand = output_dir + "/" + ligand.split(".")[0].split("/")[-1] + ".pdb"
+                        pdb_ligand = output_dir + os.sep + ligand.split(".")[0].split(os.sep)[-1] + ".pdb"
                         pdbqt_2_pdb(ligand, pdb_ligand)
                         ligands.append(pdb_ligand)
                     else:
@@ -252,7 +252,7 @@ class Tab6(object):
             pdb_ligands = []
             # 全部转换成pdb格式
             for ligand in input_ligands:
-                output_ligand = output_dir + "/" + ligand.split(".")[0].split("/")[-1] + ".pdb"
+                output_ligand = output_dir + os.sep + ligand.split(".")[0].split(os.sep)[-1] + ".pdb"
                 ob(ligand, output_ligand)
                 pdb_ligands.append(output_ligand)
             ligands = pdb_ligands
@@ -261,20 +261,20 @@ class Tab6(object):
         self.progress["maximum"] = len(ligands)
         for ligand in ligands:
             # 更新进度条
-            label_text = str(ligands.index(ligand) + 1) + "/" + str(len(ligands))
+            label_text = str(ligands.index(ligand) + 1) + os.sep + str(len(ligands))
             self.progress_label.label.configure(text=label_text)
             self.progress_label.label.update()
 
             self.progress["value"] = ligands.index(ligand) + 1
             self.progress.update()
 
-            current_ligand = "当前配体：%s" % ligand.split("/")[-1].split(".")[0]
+            current_ligand = "当前配体：%s" % ligand.split(os.sep)[-1].split(".")[0]
             self.current_ligand.label.configure(text=current_ligand)
             self.current_ligand.label.update()
 
-            output_name = ligand.split("/")[-1].split(".")[0] + "_" + input_receptor.split("/")[-1].split(".")[
+            output_name = ligand.split(os.sep)[-1].split(".")[0] + "_" + input_receptor.split(os.sep)[-1].split(".")[
                 0] + ".pdb"
-            output = output_dir + "/" + output_name
+            output = output_dir + os.sep + output_name
             ob_join(ligand, input_pdb, output)
 
         # 如果不保留提取配体，删除提取配体
@@ -340,7 +340,7 @@ class Tab6(object):
             list_file = os.listdir(input_ligands_full)
             for file in list_file:
                 if file.endswith(input_format):
-                    input_ligands.append(input_ligands_full + "/" + file)
+                    input_ligands.append(input_ligands_full + os.sep + file)
             if len(input_ligands) == 0:
                 messagebox.showerror("错误！", "所选文件夹中不包含%s格式的配体！" % input_format)
                 return

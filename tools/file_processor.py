@@ -3,6 +3,8 @@ import shutil
 import copy
 
 from tools.configer import Configer
+from tools.check import Check
+from tools.format_convertor import extract_pdbqt
 
 
 def pdbqt2dir(pdbqt_path):
@@ -116,6 +118,79 @@ def get_best_scores(scores_dict):
                 tmp_dict[receptor].pop(ligand)
 
     return tmp_dict
+
+
+def extract_file(output_file, extract_folder):
+    """
+    读取分数文件，提取配体到指定文件夹
+    :param output_file: 分数文件，txt格式
+    :param extract_folder: 输出目录
+    :return 读取成功为True，否则为False
+    """
+    # 判断文件所在位置
+    with open(output_file) as f:
+        line1 = f.readline()
+        # 有受体
+        if line1.startswith("receptor_name"):
+            # 文件所在位置不正确
+            if not Check.next_path_has_pdbqt(os.path.split(output_file)[0]):
+                print("%s所在路径不正确，请确保在受体文件夹中" % output_file)
+                return False
+
+            # 读取剩余内容
+            lines = f.readlines()
+            for line in lines:
+                receptor_name = line.split()[0]
+                ligand_name = line.split()[1]
+                extract_receptor_file(os.path.split(output_file)[0],
+                                      receptor_name, ligand_name,
+                                      extract_folder)
+            return True
+        # 只有配体
+        elif line1.startswith("ligand_name"):
+            # 文件所在位置不正确
+            if not Check.path_has_pdbqt(os.path.split(output_file)[0]):
+                print("%s所在路径不正确，请确保在配体文件夹中" % output_file)
+                return False
+
+            # 读取剩余内容
+            lines = f.readlines()
+            for line in lines:
+                ligand_name = line.split()[0]
+                extract_ligand_file(os.path.split(output_file)[0],
+                                    ligand_name, extract_folder)
+            return True
+        else:
+            print("%s读取不是指定文件" % output_file)
+            return False
+
+
+def extract_receptor_file(root_folder, receptor_name, ligand_name, output_folder):
+    """
+    从有受体的文件夹提取配体
+    :param root_folder: 根目录
+    :param receptor_name: 受体名
+    :param ligand_name: 配体名
+    :param output_folder: 输出目录
+    """
+    # 创建输出文件夹
+    output_dir = os.path.join(output_folder, receptor_name)
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
+    pdbqt_file = os.path.join(root_folder, receptor_name, ligand_name)
+    extract_pdbqt(pdbqt_file, output_dir, index=1)
+
+
+def extract_ligand_file(root_folder, ligand_name, output_folder):
+    """
+    从有配体的文件夹提取配体
+    :param root_folder: 根目录
+    :param ligand_name: 配体名
+    :param output_folder: 输出目录
+    """
+    pdbqt_file = os.path.join(root_folder, ligand_name)
+    extract_pdbqt(pdbqt_file, output_folder, index=1)
 
 
 if __name__ == '__main__':

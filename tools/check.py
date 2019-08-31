@@ -96,6 +96,36 @@ class Check(object):
             print(filename + "不是文件")
             return 0
 
+    @staticmethod
+    def path_has_pdbqt(file_path):
+        """
+        判断一个路径中是否有pdbqt文件
+        :param file_path: 文件路径
+        :return: 有返回真，没有返回False
+        """
+        files = os.listdir(file_path)
+        for file in files:
+            if file.endswith(".pdbqt"):
+                return True
+        else:
+            return False
+
+    @staticmethod
+    def next_path_has_pdbqt(file_path):
+        """
+        判断该路径下某个文件夹中含有pdbqt文件
+        :param file_path: 路径
+        :return: 有返回True，没有返回False
+        """
+        files = os.listdir(file_path)
+        for file in files:
+            next_dir = os.path.join(file_path, file)
+            if os.path.isdir(next_dir):
+                if Check.path_has_pdbqt(next_dir):
+                    return True
+        else:
+            return False
+
 
 if __name__ == '__main__':
     print(Check.check_config(r"D:\Vina_Dock\Proteins"))

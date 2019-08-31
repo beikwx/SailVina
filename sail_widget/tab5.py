@@ -15,7 +15,7 @@ from tools.receptor_processor import gen_config, proteins2dir
 from tools.text import *
 from tools.configer import Configer
 from tools.check import Check
-from tools.file_processor import create_scores_file
+from tools.file_processor import create_scores_file, extract_file
 
 
 # 工具
@@ -30,11 +30,14 @@ class Tab5(object):
         self.choose_receptor_entry = None
         self.choose_pdbqt_dir_entry = None
         self.choose_scores_entry = None
+        self.choose_output_entry = None
+        self.choose_extract_folder_entry = None
 
         # 创建窗体
         self.create_all_config()
         self.create_move_pdbqt()
         self.create_extract_scores()
+        self.extract_from_file()
 
         # 帮助按钮
         help_button = HelpButton(root=self.root, help_text=TAB5_HELP_TEXT, x=410, y=300, width=80)
@@ -103,6 +106,36 @@ class Tab5(object):
         create_tooltip(extract_button.button, "提取分数结果。如果是单个文件直接显示窗口。"
                                               "如果选择文件夹，则输出txt文件到选择的文件夹")
         extract_button.button.bind("<Button-1>", self.extract_score)
+
+    def extract_from_file(self):
+        extract_from_file_labelframe = Labelframe(self.root, text="从文件提取配体")
+        extract_from_file_labelframe.place(x=10, y=210, width=570, height=85)
+
+        choose_file_button = SButton(extract_from_file_labelframe,
+                                     text="选择输入文件",
+                                     x=10, y=0)
+        create_tooltip(choose_file_button.button, "选择输入的txt文件")
+        self.choose_output_entry = SEntry(extract_from_file_labelframe, textvariable=StringVar(),
+                                          text=Configer.get_para("output_txt"),
+                                          x=100, y=3, width=450)
+        create_tooltip(self.choose_output_entry.entry, "选择的txt文件")
+        choose_file_button.bind_open_file(entry_text=self.choose_output_entry.textvariable,
+                                          title="选择输入的txt文件",
+                                          file_type="txt")
+
+        choose_output_button = SButton(extract_from_file_labelframe,
+                                       text="选择提取目录",
+                                       x=10, y=33)
+        create_tooltip(choose_output_button.button, "选择提取输出的目录")
+        self.choose_extract_folder_entry = SEntry(extract_from_file_labelframe, textvariable=StringVar(),
+                                                  text=Configer.get_para("extract_folder"),
+                                                  x=100, y=33, width=350)
+        create_tooltip(self.choose_extract_folder_entry.entry, "选择提取输出的目录")
+        choose_output_button.bind_open_dir(entry_text=self.choose_extract_folder_entry.textvariable,
+                                           title="选择输出目录")
+        extract_button = SButton(extract_from_file_labelframe, text="提取配体", x=460, y=30, width=90)
+        create_tooltip(extract_button.button, "根据输入的文件提取配体")
+        extract_button.button.bind("<Button-1>", self.extract_file)
 
     def generate_configs(self, event):
         ligand = self.choose_ligand_entry.textvariable.get()
@@ -198,8 +231,28 @@ class Tab5(object):
             messagebox.showerror("输入错误", "请选择pdbqt文件或者选择文件夹！")
             return
 
+    def extract_file(self, event):
+        output_file = self.choose_output_entry.textvariable.get()
+        extract_path = self.choose_extract_folder_entry.textvariable.get()
+
+        if Check.check_path(output_file) or Check.check_path(extract_path):
+            messagebox.showerror("错误", "路径不能有空或者有空格")
+            return
+
+        if not output_file.endswith(".txt"):
+            messagebox.showerror("错误", "输入必须为txt文件!")
+            return
+
+        if not extract_file(output_file, extract_path):
+            messagebox.showerror("错误!", "输入文件内容无法识别！"
+                                        "具体参见命令行。")
+            return
+        messagebox.showinfo("成功", "成功提取配体！")
+
     def save_para(self):
         self.config.para_dict["refer_ligand"] = self.choose_ligand_entry.textvariable.get()
         self.config.para_dict["refer_receptor"] = self.choose_receptor_entry.textvariable.get()
         self.config.para_dict["pdbqt_dir"] = self.choose_pdbqt_dir_entry.textvariable.get()
         self.config.para_dict["choose_score_file"] = self.choose_scores_entry.textvariable.get()
+        self.config.para_dict["output_txt"] = self.choose_output_entry.textvariable.get()
+        self.config.para_dict["extract_folder"] = self.choose_extract_folder_entry.textvariable.get()

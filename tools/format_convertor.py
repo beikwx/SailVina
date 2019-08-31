@@ -72,7 +72,6 @@ def ob_3d_min(input_file, output_file, ph, minimize):
     :param output_file: 输出文件
     :param ph: ph值
     :param minimize:最小化方法
-    :return:
     """
     two_d_2_pdb(input_file, output_file, ph, minimize)
 
@@ -123,7 +122,7 @@ def extract_pdbqt(pdbqt_file, output_dir, index: int):
             i = 0
             while i < len(first_lines):
                 f.seek(0)
-                output_pdbqt = output_dir + "/" + pdbqt_file.split(".")[0].split("/")[-1] + "_" \
+                output_pdbqt = output_dir + os.sep + pdbqt_file.split(".")[0].split(os.sep)[-1] + "_" \
                                + str(i + 1) + ".pdbqt"
                 model = f.readlines()[first_lines[i]:last_lines[i] + 1]
                 with open(output_pdbqt, "w") as writer:
@@ -147,7 +146,7 @@ def extract_pdbqt(pdbqt_file, output_dir, index: int):
 
         with open(pdbqt_file) as f:
             splited_molecule = f.readlines()[first_line:last_line]
-            output_pdbqt = output_dir + "/" + pdbqt_file.split(".")[0].split("/")[-1] + "_" + str(max_num) + ".pdbqt"
+            output_pdbqt = output_dir + os.sep + pdbqt_file.split(".")[0].split(os.sep)[-1] + "_" + str(max_num) + ".pdbqt"
             with open(output_pdbqt, "w") as writer:
                 writer.writelines(splited_molecule)
             output_files.append(output_pdbqt)

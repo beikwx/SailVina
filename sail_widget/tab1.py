@@ -528,7 +528,7 @@ class Tab1(object):
         url = 'http://www.rcsb.org/pdb/files/%s.pdb' % pdb_id
 
         # 末尾如果含有斜杠，去掉斜杠
-        if file_path.endswith("/"):
+        if file_path.endswith(os.sep):
             file_path = file_path[0:-1]
 
         if not os.path.exists(file_path):

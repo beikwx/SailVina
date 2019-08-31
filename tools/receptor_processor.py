@@ -286,7 +286,7 @@ class ReceptorProcessor(object):
     @staticmethod
     def get_structure(pdb_path: str):
         parse = PDBParser(PERMISSIVE=1)
-        pdb_id = pdb_path.split("/")[-1].split(".")[0]
+        pdb_id = pdb_path.split(os.sep)[-1].split(".")[0]
         structure = parse.get_structure(pdb_id, pdb_path)
         return structure
 
@@ -379,7 +379,7 @@ class LigandExtractor(object):
 
         io = PDBIO()
         io.set_structure(self.structure)
-        io.save(save_path + "/%s_%s.pdb" % (LigandExtractor.chain_name, LigandExtractor.residue_name), LigandSelect())
+        io.save(save_path + os.sep + "%s_%s.pdb" % (LigandExtractor.chain_name, LigandExtractor.residue_name), LigandSelect())
 
 
 class ChainExtractor(object):

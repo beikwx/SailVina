@@ -68,7 +68,7 @@ class ConfigWriter(object):
 
     @staticmethod
     def write_config(para_dict, output_path):
-        with open("%s/config.txt" % output_path, "w") as f:
+        with open("%s" % output_path + os.sep + "config.txt", "w") as f:
             for para in para_dict:
                 line = "%s %s\n" % (para, para_dict[para])
                 f.writelines(line)

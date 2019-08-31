@@ -161,7 +161,7 @@ class Tab4(object):
             list_file = os.listdir(input_ligands_full)
             for file in list_file:
                 if file.endswith("pdbqt"):
-                    input_ligands.append(input_ligands_full + "/" + file)
+                    input_ligands.append(input_ligands_full + os.sep + file)
             if len(input_ligands) == 0:
                 messagebox.showerror("错误！", "所选文件夹中不包含pdbqt格式的配体！")
                 return
@@ -172,11 +172,11 @@ class Tab4(object):
         # 输入的受体
         receptors = []
         # 选择了一个受体
-        if os.path.exists("%s/preped.pdbqt" % receptor_dir):
+        if os.path.exists("%s" % receptor_dir + os.sep + "preped.pdbqt"):
             if not Check.check_config(receptor_dir):
                 messagebox.showerror("错误！", "受体中没有config.txt文件！")
                 return
-            receptors.append("%s/preped.pdbqt" % receptor_dir)
+            receptors.append("%s" % receptor_dir + os.sep + "preped.pdbqt")
         # 可能选择了多个受体
         else:
             if not os.path.exists(receptor_dir):
@@ -184,11 +184,11 @@ class Tab4(object):
                 return
             child_receptor = os.listdir(receptor_dir)
             for receptor in child_receptor:
-                if os.path.exists("%s/%s/preped.pdbqt" % (receptor_dir, receptor)):
-                    if not Check.check_config("%s/%s" % (receptor_dir, receptor)):
+                if os.path.exists("%s" % receptor_dir + os.sep + "%s" % receptor + os.sep + "preped.pdbqt"):
+                    if not Check.check_config("%s" % receptor_dir + os.sep + "%s" % receptor):
                         messagebox.showwarning("警告！", "受体%s中没有config.txt文件，将不进行对接！" % receptor)
                         continue
-                    receptors.append("%s/%s/preped.pdbqt" % (receptor_dir, receptor))
+                    receptors.append("%s" % receptor_dir + os.sep + "%s" % receptor + os.sep + "preped.pdbqt")
         if len(receptors) == 0:
             messagebox.showerror("错误！", "没有受体，请检查选择的文件夹或者子文件夹中是否"
                                         "包含preped.pdbqt文件!")
@@ -197,7 +197,7 @@ class Tab4(object):
         self.progress["maximum"] = len(receptors) * len(input_ligands)
         for receptor in receptors:
             # 在输出目录创建受体的文件夹
-            output_dir_r = "%s/%s" % (output_dir, receptor.split("/")[-2])
+            output_dir_r = "%s" % output_dir + os.sep + "%s" % receptor.split(os.sep)[-2]
             # 读取受体中的config文件
             config_files = get_config_files(os.path.split(receptor)[0])
             if not os.path.exists(output_dir_r):
@@ -218,11 +218,11 @@ class Tab4(object):
                 self.progress["value"] = current_num
                 self.progress.update()
 
-                current_protein = "当前受体：%s" % receptor.split("/")[-2]
+                current_protein = "当前受体：%s" % receptor.split(os.sep)[-2]
                 self.current_protein.label.configure(text=current_protein)
                 self.current_protein.label.update()
 
-                current_ligand = "当前配体：%s" % ligand.split("/")[-1].split(".")[0]
+                current_ligand = "当前配体：%s" % ligand.split(os.sep)[-1].split(".")[0]
                 self.current_ligand.label.configure(text=current_ligand)
                 self.current_ligand.label.update()
 
@@ -234,9 +234,10 @@ class Tab4(object):
                 while i < times:
                     dock_time = i + 1
                     for config in config_files:
-                        ligand_basename = ligand.split("/")[-1].split(".")[0]
+                        ligand_basename = ligand.split(os.sep)[-1].split(".")[0]
                         config_name = os.path.splitext(config)[0].split(os.sep)[-1]
-                        output = "%s/%s_%s_out%s.pdbqt" % (output_dir_r, ligand_basename, config_name, dock_time)
+                        output = "%s" % output_dir_r + os.sep +\
+                                 "%s_%s_out%s.pdbqt" % (ligand_basename, config_name, dock_time)
                         print(output)
                         vina_dock(ligand, receptor, config, output)
                     i += 1
