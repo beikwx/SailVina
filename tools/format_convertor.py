@@ -96,6 +96,16 @@ def ob(input_file, output_file):
     convert_result(cmd, output_file)
 
 
+def smi_2_mol(smi_string, output_file):
+    """
+    将smi字符串转成mol格式
+    :param smi_string: smi字符串
+    :param output_file: 输出的mol格式文件
+    """
+    cmd = '%s -:"%s" -O %s --gen2d' % (obabel_path, smi_string, output_file)
+    convert_result(cmd, output_file)
+
+
 def ob_join(input_file1, input_file2, output_file):
     """
     合并两个文件到一个文件
@@ -146,7 +156,8 @@ def extract_pdbqt(pdbqt_file, output_dir, index: int):
 
         with open(pdbqt_file) as f:
             splited_molecule = f.readlines()[first_line:last_line]
-            output_pdbqt = output_dir + os.sep + pdbqt_file.split(".")[0].split(os.sep)[-1] + "_" + str(max_num) + ".pdbqt"
+            output_pdbqt = output_dir + os.sep + pdbqt_file.split(".")[0].split(os.sep)[-1] + "_" + str(
+                max_num) + ".pdbqt"
             with open(output_pdbqt, "w") as writer:
                 writer.writelines(splited_molecule)
             output_files.append(output_pdbqt)

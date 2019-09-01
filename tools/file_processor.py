@@ -1,10 +1,12 @@
 import os
 import shutil
 import copy
+from itertools import product
 
 from tools.configer import Configer
 from tools.check import Check
-from tools.format_convertor import extract_pdbqt
+from tools.format_convertor import extract_pdbqt, smi_2_mol
+from tools.file_path import substituents_path
 
 
 def pdbqt2dir(pdbqt_path):
@@ -195,11 +197,16 @@ def extract_ligand_file(root_folder, ligand_name, output_folder):
 
 def gen_smi_der(raw_smi: str, output_path):
     """
-    根据提供的含有R的smi生成取代基衍生物
+    根据提供的含有R的smi生成取代基衍生物，生成mol格式到输出目录
     :param raw_smi: 含有R的smi表达式
     :param output_path: 输出路径
     """
     der_smi = gen_smi(raw_smi)
+    i = 0
+    while i < len(der_smi):
+        output_file = os.path.join(output_path, str(i)) + ".mol"
+        smi_2_mol(der_smi[i], output_file)
+        i += 1
 
 
 def gen_smi(raw_smi: str):
@@ -209,20 +216,69 @@ def gen_smi(raw_smi: str):
     :return: 生成的smi列表
     """
     new_smi = []
-    # 判断有多少个R
-    r_num = raw_smi.count("[R]")
+    # 根据[R]来切分字符串
+    split_smi = raw_smi.split("[R]")
+    # 如果只有一个元素则表示没有[R]标签
+    if len(split_smi) == 1:
+        print("%s没有[R]标签！" % raw_smi)
+        return
 
-    # 替换R
+    # 第一种情况：第一个为[R],其他没有
+    if split_smi[0] == "" and len(split_smi) == 2:
+        for sub in read_subs(1):
+            new_smi.append(sub + split_smi[1])
+
+    # 第二种情况，中间为[R]，可以有1个或者多个
+    # [R]的个数
+    r_count = len(split_smi) - 1
+    if split_smi[0] != "":
+        # 生成排列组合
+        sub_list = list(product(read_subs(0), repeat=r_count))
+        for sub in sub_list:
+            i = 0
+            smi = split_smi[0]
+            while i < r_count:
+                smi += "(" + sub[i] + ")" + split_smi[i + 1]
+                i += 1
+            new_smi.append(smi)
+
+    # 第三种情况，开头有个[R]，中间还有[R]
+    if split_smi[0] == "" and len(split_smi) > 2:
+        for first_sub in read_subs(1):
+            sub_list = list(product(read_subs(0), repeat=(r_count - 1)))
+            for sub in sub_list:
+                i = 0
+                smi = first_sub + split_smi[1]
+                while i < (r_count - 1):
+                    smi += "(" + sub[i] + ")" + split_smi[i + 2]
+                    i += 1
+                new_smi.append(smi)
 
     return new_smi
 
 
+def read_subs(position: int):
+    """
+    读取取代基配置文件
+    :param position: R所在的位置。1表示在第一位，0表示在其他位置
+    :return: 取代基表示列表
+    """
+    sub_list = []
+    with open(substituents_path, encoding='UTF-8') as f:
+        lines = f.readlines()
+        for line in lines:
+            if line.startswith("#") or line == "\n":
+                continue
+            if position == 0:
+                sub_list.append(line.split("=")[1].strip())
+            elif position == 1:
+                if len(line.split("=")) == 3:
+                    sub_list.append(line.split("=")[2].strip())
+                else:
+                    sub_list.append(line.split("=")[1].strip())
+    return sub_list
+
+
 if __name__ == '__main__':
-    pass
     # 本地调试代码
-    # pdbqt2dir("./Proteins/pdb (1).pdbqt")
-    # gen_config_file("./config.txt", 1, 1, 1, 20)
-    # get_config_files(r".\Proteins\01")
-    # r_dict = {'01': {'0.pdbqt': '-3.2', '1.pdbqt': '-3.1', '2.pdbqt': '-3.5'},
-    #           '02': {'0.pdbqt': '-3.2', '1.pdbqt': '-3.2', '2.pdbqt': '-3.2'}}
-    # print(get_best_scores(r_dict))
+    gen_smi_der("[R]C(C=C1)=CC=C1C2=CC=CC=C2", "D:\\Desktop")

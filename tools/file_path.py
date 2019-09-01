@@ -14,5 +14,8 @@ prepare_receptor4_path = os.path.realpath(__file__) + os.sep + ".." + os.sep + \
 vina_path = os.path.realpath(__file__) + os.sep + ".." + os.sep + ".." + os.sep + \
             "others" + os.sep + "vina.exe"
 
+substituents_path = os.path.realpath(__file__) + os.sep + ".." + os.sep + \
+                    "substituents.txt"
+
 if __name__ == '__main__':
-    print(prepare_ligand4_path, pdbqt_to_pdb_path, prepare_receptor4_path)
+    print(substituents_path)

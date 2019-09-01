@@ -26,7 +26,7 @@ NH2 = N
 # 羟基
 OH = O
 # 甲氧基
-OCH3 = OC CO
+OCH3 = OC = CO
 
 # F
 F = F
