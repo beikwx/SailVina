@@ -193,6 +193,30 @@ def extract_ligand_file(root_folder, ligand_name, output_folder):
     extract_pdbqt(pdbqt_file, output_folder, index=1)
 
 
+def gen_smi_der(raw_smi: str, output_path):
+    """
+    根据提供的含有R的smi生成取代基衍生物
+    :param raw_smi: 含有R的smi表达式
+    :param output_path: 输出路径
+    """
+    der_smi = gen_smi(raw_smi)
+
+
+def gen_smi(raw_smi: str):
+    """
+    根据提供的含有R的smi表达式产生新的smi
+    :param raw_smi: 含有R的smi的表达式
+    :return: 生成的smi列表
+    """
+    new_smi = []
+    # 判断有多少个R
+    r_num = raw_smi.count("[R]")
+
+    # 替换R
+
+    return new_smi
+
+
 if __name__ == '__main__':
     pass
     # 本地调试代码

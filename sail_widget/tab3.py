@@ -484,3 +484,7 @@ class Tab3(object):
         self.config.para_dict["is_minimize"] = self.is_minimize.variable.get()
         self.config.para_dict["minimize"] = self.minimize.textvariable.get()
         self.config.para_dict["ligand_output_dir"] = self.choose_output_dir_entry.textvariable.get()
+
+
+if __name__ == '__main__':
+    print(os.sep)
