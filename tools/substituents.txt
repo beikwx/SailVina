@@ -6,27 +6,27 @@
 H =
 
 # 甲基
-CH3 = C
+# CH3 = C
 # 乙基
-CH2CH3 = CC
+# CH2CH3 = CC
 # 丙基
-CH2CH2CH3 = CCC
+# CH2CH2CH3 = CCC
 # 异丙基
-CH(CH3)(CH3) = C(C)C
+# CH(CH3)(CH3) = C(C)C
 # 正丁基
-CH2CH2CH2CH3 = CCCC
+# CH2CH2CH2CH3 = CCCC
 # 异丁基
-C(CH3)(CH3)(CH3) = C(C)(C)(C)
+# C(CH3)(CH3)(CH3) = C(C)(C)(C)
 # 三氟甲基
-CF3 = C(F)(F)F
+# CF3 = C(F)(F)F
 
 # 氨基
-NH2 = N
+# NH2 = N
 
 # 羟基
-OH = O
+# OH = O
 # 甲氧基
-OCH3 = OC = CO
+# OCH3 = OC = CO
 
 # F
 F = F

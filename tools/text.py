@@ -9,6 +9,7 @@ TAB4_TEXT = "分子对接"
 TAB5_TEXT = "工具"
 TAB6_TEXT = "生成复合物"
 TAB7_TEXT = "关于"
+TAB8_TEXT = "其他工具"
 
 # 帮助文本
 TAB1_HELP_TEXT = "本界面用于下载和准备受体文件\n\n" \
@@ -83,3 +84,5 @@ TAB7_HELP_TEXT = "SailVina\n\n" \
                  "感谢提出意见和bug反馈的各位同学，本人读研事情也比较多，平时偶尔用到分子对接，但是现在对接没有" \
                  "一个好用的GUI，所以想编写这个软件一劳永逸，更新较慢，如果有好的想法希望多多交流。\n\n" \
                  "Happy docking!"
+
+TAB8_HELP_TEXT = "其他工具都放在这里"

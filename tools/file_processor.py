@@ -218,10 +218,6 @@ def gen_smi(raw_smi: str):
     new_smi = []
     # 根据[R]来切分字符串
     split_smi = raw_smi.split("[R]")
-    # 如果只有一个元素则表示没有[R]标签
-    if len(split_smi) == 1:
-        print("%s没有[R]标签！" % raw_smi)
-        return
 
     # 第一种情况：第一个为[R],其他没有
     if split_smi[0] == "" and len(split_smi) == 2:

@@ -14,6 +14,7 @@ from sail_widget.tab4 import Tab4
 from sail_widget.tab5 import Tab5
 from sail_widget.tab6 import Tab6
 from sail_widget.tab7 import Tab7
+from sail_widget.addition_tools_tab import AdditionToolsTab
 from sail_widget.set_config import SetConfig
 
 
@@ -32,6 +33,7 @@ class MainWindows(object):
         self.tab5_configer = None
         self.tab6_configer = None
         self.tab7_configer = None
+        self.tab8_configer = None
 
         # 如果第一次打开，创建参数文件
         Configer.first_open()
@@ -107,12 +109,16 @@ class MainWindows(object):
         # 关于
         tab7 = Frame(notebook)
 
+        # 其他工具
+        tab8 = Frame(notebook)
+
         # 放置选项卡
         notebook.add(tab1, text=TAB1_TEXT)
         notebook.add(tab2, text=TAB2_TEXT)
         notebook.add(tab3, text=TAB3_TEXT)
         notebook.add(tab4, text=TAB4_TEXT)
         notebook.add(tab5, text=TAB5_TEXT)
+        notebook.add(tab8, text=TAB8_TEXT)
         notebook.add(tab6, text=TAB6_TEXT)
         notebook.add(tab7, text=TAB7_TEXT)
 
@@ -133,6 +139,7 @@ class MainWindows(object):
         self.tab4_configer = Tab4(tab4, self.config)
         self.tab5_configer = Tab5(tab5, self.config)
         self.tab6_configer = Tab6(tab6, self.config)
+        self.tab8_configer = AdditionToolsTab(tab8, self.config)
         self.tab7_configer = Tab7(tab7)
 
     def set_config(self):
@@ -150,6 +157,7 @@ class MainWindows(object):
             self.tab4_configer.save_para()
             self.tab5_configer.save_para()
             self.tab6_configer.save_para()
+            self.tab8_configer.save_para()
 
             # 进行文件保存
             self.config.save_para()
