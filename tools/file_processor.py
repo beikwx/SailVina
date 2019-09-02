@@ -275,6 +275,43 @@ def read_subs(position: int):
     return sub_list
 
 
+def get_backbone(file):
+    """
+    获取一个pdb文件的骨架
+    :param file: pdb文件
+    :return: 骨架
+    """
+    backbone = []
+    with open(file) as f:
+        lines = f.readlines()
+        for line in lines:
+            # HETATM    1  C   UNL     1      21.020   0.624  28.104  1.00  0.00      topt C
+            if line.startswith("HETATM") or line.startswith("ATOM"):
+                atom = line.split()[2]
+                if atom != "H":
+                    backbone.append(atom)
+    return backbone
+
+
+def get_ligand_position(file):
+    """
+    返回pdb文件的坐标
+    :param file: pdb文件
+    :return: 坐标文件列表
+    """
+    position = []
+    with open(file) as f:
+        lines = f.readlines()
+        for line in lines:
+            # HETATM    1  C   UNL     1      21.020   0.624  28.104  1.00  0.00      topt C
+            if line.startswith("HETATM") or line.startswith("ATOM"):
+                info = line.split()
+                atom = info[2]
+                if atom != "H":
+                    position.append([info[5], info[6], info[7]])
+    return position
+
+
 if __name__ == '__main__':
     # 本地调试代码
     gen_smi_der("[R]C(C=C1)=CC=C1C2=CC=CC=C2", "D:\\Desktop")
