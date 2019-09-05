@@ -96,6 +96,16 @@ def ob(input_file, output_file):
     convert_result(cmd, output_file)
 
 
+def ob_noh_xyz(input_file, output_file):
+    """
+    单纯使用obabel进行转换xyz格式，删除氢原子
+    :param input_file: 输入文件
+    :param output_file: 输出文件
+    """
+    cmd = "%s %s -O %s -d" % (obabel_path, input_file, output_file)
+    convert_result(cmd, output_file)
+
+
 def smi_2_mol(smi_string, output_file):
     """
     将smi字符串转成mol格式
@@ -194,3 +204,8 @@ def convert_result(cmd, output_file):
         print("%s准备失败，可能文件内部格式有误" % output_file)
         print("------------------------------------------------------------")
         return False
+
+
+if __name__ == '__main__':
+    ob_noh_xyz(r"D:\Desktop\01.xyz", r"D:\Desktop\01-.xyz")
+    ob_noh_xyz(r"D:\Desktop\02.xyz", r"D:\Desktop\02-.xyz")

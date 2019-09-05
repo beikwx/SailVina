@@ -301,7 +301,7 @@ class Tab3(object):
                 return
 
         # pdb/mol2->pdbqt
-        elif input_format == "pdb" or input_format == "mol2" and output_format == "pdbqt":
+        elif (input_format == "pdb" or input_format == "mol2") and output_format == "pdbqt":
             i = 0
             while i < len(input_ligands):
                 # 更改标签文字

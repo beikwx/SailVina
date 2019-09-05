@@ -6,7 +6,7 @@ from tools.file_processor import get_backbone, get_ligand_position
 
 def cal_rmsd(file1, file2):
     """
-    计算两个文件的rmsd，目前只支持rmsd文件
+    计算两个文件的rmsd，目前只支持pdb文件
     :param file1: 第一个pdb文件
     :param file2: 第二个pdb文件
     :return: rmsd值,-1表示骨架不一样
