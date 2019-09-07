@@ -39,6 +39,10 @@ class AdditionToolsTab(object):
         create_tooltip(gen_smi_button.button, "根据smi生成不同取代基衍生物")
         gen_smi_button.button.bind("<Button-1>", self.gen_smi)
 
+        cal_rmsd_button = SButton(self.root, text="计算小分子RMSD", x=110, y=10)
+        create_tooltip(cal_rmsd_button.button, "计算两个小分子之间的RMSD值。")
+        cal_rmsd_button.button.bind("<Button-1>", self.cal_rmsd)
+
     def gen_smi(self, event):
         windows = STopLevel(self.root, win_x=570, win_y=100, title="分子生成器").toplevel
 
@@ -96,6 +100,9 @@ class AdditionToolsTab(object):
         self.input_smi = input_smi
         self.output_path = output_path
         window.destroy()
+
+    def cal_rmsd(self, event):
+        windows = STopLevel(self.root, win_x=570, win_y=100, title="计算RMSD").toplevel
 
     def save_para(self):
         self.config.para_dict["input_smi"] = self.input_smi

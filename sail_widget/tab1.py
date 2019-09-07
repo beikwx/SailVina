@@ -197,7 +197,7 @@ class Tab1(object):
         waters = int(self.waters.variable.get())
         nonstdres = int(self.nonstdres.variable.get())
 
-        if not Check.check_python(Configer.get_para("python_path")):
+        if not Check.check_python():
             return
 
         if Check.check_path(input_file) or Check.check_path(output_path):
@@ -414,7 +414,7 @@ class Tab1(object):
     def save_ligand(self, event):
         self.ligand_name = self.ligand_list.get(ACTIVE)
 
-        if not Check.check_python(Configer.get_para("python_path")):
+        if not Check.check_python():
             return
 
         LigandExtractor(self.structure, self.model_name,

@@ -70,6 +70,11 @@ def mk_output_dir(file_path):
         os.mkdir(file_path)
 
 
+def remove_dir_if_exist(rm_dir):
+    if os.path.exists(rm_dir):
+        shutil.rmtree(rm_dir)
+
+
 def create_scores_file(output_file, scores_dict, mode=0):
     """
     创建分数文件

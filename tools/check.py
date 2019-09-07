@@ -19,8 +19,13 @@ class Check(object):
         return False
 
     @staticmethod
-    def check_obabel(obabel_path):
-        if Configer.get_para("obabel_path") != "":
+    def check_obabel():
+        """
+        检查obabel是否配置正确
+        :return: 正确返回True，不正确返回False
+        """
+        obabel_path = Configer.get_para("obabel_path")
+        if obabel_path != "":
             return True
         if obabel_path.count(" ") > 0 or not obabel_path.endswith("obabel.exe"):
             messagebox.showerror("输入错误！", "obabel.exe选择不正确！请确保路径不包含空格并且是obabel.exe文件！")
@@ -34,14 +39,14 @@ class Check(object):
         return True
 
     @staticmethod
-    def check_python(choose_python_path):
+    def check_python():
         """
         检查adt的python路径是否配置正确
-        :param choose_python_path: 选择的python路径
         :return: 正确返回True
         """
+        choose_python_path = Configer.get_para("python_path")
         # 如果有内容，直接判断通过
-        if Configer.get_para("python_path") != "":
+        if choose_python_path != "":
             return True
         if choose_python_path.count(" ") > 0 or not choose_python_path.endswith("python.exe"):
             messagebox.showerror("输入错误！", "adt的python.exe选择不正确，请确保路径不包含空格并且是python.exe文件！")

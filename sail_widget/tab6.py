@@ -211,12 +211,11 @@ class Tab6(object):
             messagebox.showerror("错误！", "请检查输入的配体！")
             return
 
-        python_path = Configer.get_para("python_path")
         # 检查路径是否正确
-        if not Check.check_python(python_path):
+        if not Check.check_python():
             return
         obabel_path = Configer.get_para("obabel_path")
-        if not Check.check_obabel(obabel_path):
+        if not Check.check_obabel():
             return
 
         self.progress_label.label.configure(text="准备受体")

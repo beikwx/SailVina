@@ -12,8 +12,6 @@ prepare_receptor4_path = others_path + os.sep + "prepare_receptor4.py"
 
 vina_path = others_path + os.sep + "vina.exe"
 
-cal_rmsd_path = others_path + os.sep + "calculate_rmsd.py"
-
 substituents_path = os.path.realpath(__file__) + os.sep + ".." + os.sep + \
                     "substituents.txt"
 

@@ -168,10 +168,10 @@ class Tab3(object):
         convert_button.button.bind("<Button-1>", self._start_convert)
 
     def _start_convert(self, event):
-        if not Check.check_obabel(Configer.get_para("obabel_path")):
+        if not Check.check_obabel():
             return
 
-        if not Check.check_python(python_path):
+        if not Check.check_python():
             return
 
         input_files = self.choose_ligands_entry.textvariable.get()
