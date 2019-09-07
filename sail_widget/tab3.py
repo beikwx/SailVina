@@ -52,7 +52,7 @@ class Tab3(object):
         # 选择输入配体的格式
         SLabel(root=choose_ligand_labelframe, text="输入格式：",
                x=10, y=0)
-        input_format_text = ("mol", "sdf", "mol2", "pdb", "pdbqt")
+        input_format_text = ("mol", "sdf", "mol2", "pdb", "pdbqt", "xyz")
         self.input_format = SCombbox(root=choose_ligand_labelframe, textvariable=StringVar(),
                                      values=input_format_text,
                                      default_value=Configer.get_para("input_format"),
@@ -364,7 +364,7 @@ class Tab3(object):
                 self.progress_label.label.configure(text="没有任务")
                 return
             # sdf->pdbqt
-            elif input_format == "sdf" and output_format == "pdbqt":
+            elif (input_format == "sdf" or input_format == "xyz") and output_format == "pdbqt":
                 # 先转pdb
                 pdb_ligands = []
                 for ligand in input_ligands:
@@ -406,7 +406,7 @@ class Tab3(object):
                 self.progress["value"] = 0
                 self.progress_label.label.configure(text="没有任务")
                 return
-            # mol/smi/sdf/mol2/pdb->pdb/sdf/mol2/xyz
+            # mol/smi/sdf/mol2/pdb/xyz->pdb/sdf/mol2/xyz
             else:
                 if gen3d == "1":
                     # 3D并最小化

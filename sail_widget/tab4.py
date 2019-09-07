@@ -132,8 +132,8 @@ class Tab4(object):
         docking_times = self.times_entry.entry.get()
 
         # 所有选择的路径和文件都不能为空和包含空格。
-        if (Check.check_path(input_ligands_full) and Check.check_path(receptor_dir)
-                and Check.check_path(output_dir) and Check.check_path(docking_times)):
+        if (Check.check_path(input_ligands_full) or Check.check_path(receptor_dir)
+                or Check.check_path(output_dir) or Check.check_path(docking_times)):
             messagebox.showerror("输入错误", "所有参数不能为空或者包含空格")
             return
 

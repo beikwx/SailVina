@@ -42,25 +42,13 @@ def cal_rmsd(file1, file2):
 def charnley_cal_rmsd(file1, file2, rotation_method, reorder_method):
     """
     使用charnley方法计算rmsd
-    :param outputfile: 输出文件
     :param file1: 第一个xyz文件
     :param file2: 第二个xyz文件
     :param rotation_method: 是否旋转原子。kabsch, quaternion or none
     :param reorder_method: 对齐原子。hungarian, brute, distance
     :return 成功返回rmsd值，不成功返回False
     """
-    cmd = ""
-    # 情况一：不旋转
-    if rotation_method == "none":
-        cmd = "python %s %s %s -e --reorder-method %s" % (cal_rmsd_path, file1, file2, reorder_method)
 
-    # 情况二：旋转
-    else:
-        cmd = "python %s %s %s -r %s -e --reorder-method %s" % (cal_rmsd_path, file1, file2,
-                                                                rotation_method, reorder_method)
-    rmsd = os.popen(cmd).read()
-    return rmsd
+    pass
 
 
-if __name__ == '__main__':
-    print(cal_rmsd(r"D:\Desktop\toptecam_out1_1.pdb", r"D:\Desktop\cystal.pdb"))
