@@ -6,7 +6,6 @@ import os
 from tools.file_processor import get_backbone, get_ligand_position
 from tools.file_processor import mk_output_dir, remove_dir_if_exist
 from tools.format_convertor import ob_noh_xyz
-from tools.check import Check
 from tools.calculate_rmsd import *
 
 
@@ -63,10 +62,6 @@ def charnley_cal_rmsd(file1, file2, s_rotation_method, s_reorder_method):
 
     output_file1 = os.path.join(tmp1_dir, file1_name)
     output_file2 = os.path.join(tmp1_dir, file2_name)
-
-    if not Check.check_obabel():
-        print("Obabel配置不正确!")
-        return False
 
     ob_noh_xyz(file1, output_file1)
     ob_noh_xyz(file2, output_file2)
