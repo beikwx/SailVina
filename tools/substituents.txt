@@ -22,6 +22,25 @@ H =
 
 # 氨基
 # NH2 = N
+# 氨甲基
+# CH3NH2 = NC = CN
+# 哌嗪基
+# Piperazinyl = N6CCNCC6
+# N-甲基哌嗪基
+# N-Methylpiperazinyl = N6CCN(C)CC6
+# 吗啉基
+# Morpholinyl = N6CCOCC6
+# 哌啶基
+# piperidinyl = N6CCCCC6
+# N-羟乙基哌嗪基
+# N-hydroxyethylpiperazinyl = N6CCN(CCO)CC6
+# 吡咯基
+# pyrrolidinyl = N6CCCC6
+# 二甲胺基
+# Dimethylaminyl = N(C)C
+# 二乙胺基
+# Diethylaminyl = N(CC)CC
+
 
 # 羟基
 # OH = O

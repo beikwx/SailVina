@@ -76,7 +76,7 @@ TAB6_HELP_TEXT = "本界面用于生成配体-受体复合物\n\n" \
 
 TAB7_HELP_TEXT = "SailVina\n\n" \
                  "本软件由python的Tkinter开发，调用biopython（受体准备），mgltools（准备配体，受体）" \
-                 "，openbabel（格式转化，文件合并），rmsd（计算RMSD等）\n\n" \
+                 "，openbabel（格式转化，文件合并）\n\n" \
                  "开发者：beikwx\n" \
                  "Bug及反馈邮箱：studyforever0225@gmail.com\n" \
                  "Github开源地址：https://github.com/beikwx/SailVina\n" \

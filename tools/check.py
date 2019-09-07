@@ -26,7 +26,7 @@ class Check(object):
             messagebox.showerror("输入错误！", "obabel.exe选择不正确！请确保路径不包含空格并且是obabel.exe文件！")
             return False
         obabel_cmd = os.popen(obabel_path).read()
-        print(obabel_cmd)
+        # print(obabel_cmd)
         if "Usage:\nobabel" not in obabel_cmd:
             messagebox.showerror("错误！", "obabel.exe不正确，请在“脚本配置”中选择！")
             return False

@@ -73,6 +73,10 @@ class AdditionToolsTab(object):
 
     def _gen_smi(self, event):
 
+        if not Check.check_obabel(Configer.get_para("obabel_path")):
+            messagebox.showerror("错误！", "请检查obabel路径是否配置正确！")
+            return
+
         smi = self.input_smi_entry.textvariable.get()
         output_path = self.output_path_entry.textvariable.get()
 
