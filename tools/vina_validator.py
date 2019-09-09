@@ -2,11 +2,17 @@ import os
 import urllib.request
 from urllib.error import URLError, HTTPError
 from xml.dom import minidom
+import shutil
 
 from tools.receptor_processor import prepare_receptor, gen_config
 from tools.file_processor import mk_output_dir
-from tools.format_convertor import three_d_2_pdb, pdb_mol2_2_pdbqt, extract_pdbqt
+from tools.format_convertor import three_d_2_pdb, pdb_mol2_2_pdbqt, \
+    extract_pdbqt, ob_noh_xyz, pdbqt_2_pdb
 from tools.dock_processor import vina_dock
+from tools.read_scores import read_scores
+from tools.rmsd import charnley_cal_rmsd
+
+MAX_RMSD = 2.0
 
 
 def validate_folder(target_folder):
@@ -145,9 +151,43 @@ def validate_folder(target_folder):
         pdbqt_file = os.path.join(output_folder, dock_output_file)
         extract_pdbqt(pdbqt_file, extract_folder, 0)
 
-    #
+    # 3.2读取切割的每个文件的分数，同时计算RMSD
+    xyz_folder = os.path.join(target_folder, "XYZ")
+    mk_output_dir(xyz_folder)
+    print("----------转换原始配体文件格式----------")
+    xyz_ligand = os.path.join(xyz_folder, "ligand.xyz")
+    ob_noh_xyz(pdb_ligand, xyz_ligand)
+    print("----------输出报告---------")
+    report_file = os.path.join(target_folder, "report.txt")
+    last_validate_folder = os.path.join(target_folder, "Validate")
+    mk_output_dir(last_validate_folder)
+    with open(report_file, "w") as f:
+        f.writelines("Title:\t%s\n" % pdb_title)
+        f.writelines("Keywords:\t%s\n" % pdb_keywords)
+        f.writelines("Ligand_name\tscores\trmsd\n")
+        for output_ligand in os.listdir(extract_folder):
+            if output_ligand.endswith(".pdbqt"):
+                ligand_name = output_ligand[:-6]
+                sec_ligand = os.path.join(extract_folder, output_ligand)
+                # 读取分数
+                score = read_scores(sec_ligand)[0]
+                # 转换格式
+                sec_pdb_ligand = os.path.join(xyz_folder, ligand_name + ".pdb")
+                sec_xyz_ligand = os.path.join(xyz_folder, ligand_name + ".xyz")
+                pdbqt_2_pdb(sec_ligand, sec_pdb_ligand)
+                ob_noh_xyz(sec_pdb_ligand, sec_xyz_ligand)
+                # 删除中间体
+                os.remove(sec_pdb_ligand)
+                # 计算rmsd
+                rmsd = charnley_cal_rmsd(xyz_ligand, sec_xyz_ligand, "none", "hungarian")
+                # RMSD达到要求，复制文件到Validate目录
+                if float(rmsd) <= MAX_RMSD:
+                    dst = os.path.join(last_validate_folder, ligand_name + ".pdbqt")
+                    shutil.copy(sec_ligand, dst)
+                f.writelines("%s\t%s\t%s\n" % (ligand_name, score, rmsd))
 
 
 if __name__ == '__main__':
-    validate_folder(r"D:\Desktop\3lnk")
+    validate_folder(r"D:\Desktop\5eiw")
     # extract_pdbqt(r"D:\Desktop\3lnk\Output\3lnk_config1.pdbqt", r"D:\Desktop\3lnk\Extract", 0)
+    # print(read_scores(r"D:\Desktop\1akv\Extract\1akv_config1_1.pdbqt")[0])
