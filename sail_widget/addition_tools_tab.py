@@ -228,7 +228,7 @@ class AdditionToolsTab(object):
         if len(rmsds) == 1:
             top = SMultiTopLevel(self.windows, win_x=400, win_y=100, title="RMSD结果").toplevel
             for ligand in rmsds:
-                text = "%s    vs    %s" % (os.path.split(single_ligand)[-1],
+                text = "%s    vs    %s" % (os.path.split(single_ligand)[-1][:-4],
                                            os.path.split(ligand)[-1])
                 SLabel(top, text=text, x=10, y=10)
                 text = rmsds[ligand]
