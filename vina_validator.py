@@ -28,7 +28,7 @@ def validate_folder(target_folder):
     """
     if not os.path.isdir(target_folder):
         print("选择的必须是一个目录！")
-        return
+        return False
 
     # 创建处理目录
     process_folder = os.path.join(target_folder, "process")
@@ -44,7 +44,7 @@ def validate_folder(target_folder):
     pdb_id = os.path.split(target_folder)[-1]
     if len(pdb_id) != 4:
         print("%s不是pdbid!" % pdb_id)
-        return
+        return False
 
     print("----------正在解析文件夹%s----------" % target_folder)
 
@@ -61,7 +61,7 @@ def validate_folder(target_folder):
 
     if input_protein is None or input_ligand is None:
         print("%s缺少配体或者受体，无法验证！" % target_folder)
-        return
+        return False
 
     if input_pocket is None:
         print("%s缺少口袋文件，将搜索整个蛋白进行重对接" % target_folder)
@@ -117,7 +117,7 @@ def validate_folder(target_folder):
         result = prepare_receptor(input_protein, preped_protein, "None", 0, 1, 1, 1, 1)
         if not result:
             print("----------准备受体失败，受体可能存在问题，请修复后重新尝试----------")
-            return
+            return False
 
     # 2.2准备配体
     preped_ligand = os.path.join(process_folder, "ligand.pdbqt")
@@ -208,6 +208,7 @@ def validate_folder(target_folder):
                     shutil.copy(sec_ligand, dst)
                 f.writelines("%s\t%s\t%s\n" % (ligand_name, score, rmsd))
     print("----------验证%s结束----------" % target_folder)
+    return True
 
 
 if __name__ == '__main__':

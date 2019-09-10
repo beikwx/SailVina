@@ -3,6 +3,8 @@ from tkinter import *
 
 import os
 
+import vina_validator
+
 from sail_widget.s_button import HelpButton, SButton
 from sail_widget.tooltip import create_tooltip
 from sail_widget.s_toplevel import STopLevel, SMultiTopLevel
@@ -35,6 +37,8 @@ class AdditionToolsTab(object):
         self.rotate_method = ""
         self.reorder_method = ""
 
+        self.validate_folder = ""
+
         # 需要保存的输入框
         self.input_smi_entry = None
         self.output_path_entry = None
@@ -43,6 +47,8 @@ class AdditionToolsTab(object):
         self.sec_ligands_entry = None
         self.rotate_method_box = None
         self.reorder_method_box = None
+
+        self.input_path_entry = None
 
         # 创建按钮
         self.create_buttons()
@@ -59,6 +65,10 @@ class AdditionToolsTab(object):
         cal_rmsd_button = SButton(self.root, text="计算小分子RMSD", x=110, y=10)
         create_tooltip(cal_rmsd_button.button, "计算两个小分子之间的RMSD值。")
         cal_rmsd_button.button.bind("<Button-1>", self.cal_rmsd)
+
+        vina_validate_button = SButton(self.root, text="Vina一键验证", x=230, y=10)
+        create_tooltip(vina_validate_button.button, "一键验证某个含有配体的蛋白是否可以用于Vina对接。")
+        vina_validate_button.button.bind("<Button-1>", self.vina_validate)
 
     def gen_smi(self, event):
         self.windows = STopLevel(self.root, win_x=570, win_y=100, title="分子生成器").toplevel
@@ -252,6 +262,41 @@ class AdditionToolsTab(object):
         self.reorder_method = reorder_method
         window.destroy()
 
+    def vina_validate(self, event):
+        self.windows = STopLevel(self.root, win_x=570, win_y=50, title="计算RMSD").toplevel
+
+        # 选择目录
+        input_button = SButton(self.windows, text="选择验证目录",
+                               x=10, y=10)
+        create_tooltip(input_button.button, "选择要验证的目录。该目录必须包含配体和受体！")
+        self.input_path_entry = SEntry(self.windows, textvariable=StringVar(),
+                                       text=Configer.get_para(
+                                           "validate_folder") if self.validate_folder == "" else self.validate_folder,
+                                       x=100, y=13, width=360)
+        create_tooltip(self.input_path_entry.entry, "选择的要验证的目录")
+        input_button.bind_open_dir(entry_text=self.input_path_entry.textvariable,
+                                   title="选择要验证的目录", parent=self.windows)
+
+        validate_button = SButton(self.windows, "开始验证",
+                                  x=465, y=10)
+        create_tooltip(validate_button.button, "开始验证Vina方案")
+        validate_button.button.bind("<Button-1>", self._vina_validate)
+
+        # 关闭窗口保存参数
+        self.windows.protocol("WM_DELETE_WINDOW", lambda: self.save_validate(self.windows,
+                                                                             self.input_path_entry.textvariable.get()))
+
+    def _vina_validate(self, event):
+        target_folder = self.input_path_entry.textvariable.get()
+        if not vina_validator.validate_folder(target_folder):
+            messagebox.showerror("错误！", "无法验证所选文件夹")
+        else:
+            messagebox.showinfo("验证成功！", "验证%s完成！" % target_folder)
+
+    def save_validate(self, window: Toplevel, validate_folder):
+        self.validate_folder = validate_folder
+        window.destroy()
+
     def save_para(self):
         self.config.para_dict["input_smi"] = self.input_smi
         self.config.para_dict["mol_output_path"] = self.output_path
@@ -259,3 +304,4 @@ class AdditionToolsTab(object):
         self.config.para_dict["sec_ligands"] = self.sec_ligands
         self.config.para_dict["rotate_method"] = self.rotate_method
         self.config.para_dict["reorder_method"] = self.reorder_method
+        self.config.para_dict["validate_folder"] = self.validate_folder
