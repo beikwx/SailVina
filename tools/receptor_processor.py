@@ -48,6 +48,7 @@ def prepare_receptor(receptor: str, output_file: str,
     :param lps:合并电荷。1或者0
     :param waters:去水。1或者0
     :param nonstdres:去除非标准氨基酸。1或者0
+    :return 准备成功返回真，失败返回假
     """
     u_para_list = []
     if nphs:
@@ -95,10 +96,12 @@ def prepare_receptor(receptor: str, output_file: str,
         print("------------------------------------------------------------")
         print("%s准备成功" % receptor)
         print("------------------------------------------------------------")
+        return True
     else:
         print("------------------------------------------------------------")
         print("%s准备失败，请尝试使用biopython进行修复。" % receptor)
         print("------------------------------------------------------------")
+        return False
 
 
 def get_receptors(receptors_root_path):

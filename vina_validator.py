@@ -38,6 +38,7 @@ def validate_folder(target_folder):
     input_protein = None
     input_ligand = None
     input_pocket = None
+    config_file = []
 
     # 获取pdbid，所选文件夹就是
     pdb_id = os.path.split(target_folder)[-1]
@@ -55,13 +56,15 @@ def validate_folder(target_folder):
             input_ligand = os.path.join(target_folder, file)
         if "pocket" in file:
             input_pocket = os.path.join(target_folder, file)
+        if "config" in file:
+            config_file.append(os.path.join(target_folder, file))
 
     if input_protein is None or input_ligand is None:
         print("%s缺少配体或者受体，无法验证！" % target_folder)
         return
 
     if input_pocket is None:
-        print("%s缺少口袋文件，将搜索整个蛋白进行重对接")
+        print("%s缺少口袋文件，将搜索整个蛋白进行重对接" % target_folder)
 
     print("输入的配体是%s:" % input_protein)
     print("输入的受体是%s:" % input_ligand)
@@ -72,9 +75,6 @@ def validate_folder(target_folder):
     # 1.获取pdb信息
 
     # 1.1目标网址https://www.rcsb.org/pdb/rest/describePDB?structureId=xxxx
-    pdb_title = None
-    pdb_keywords = None
-
     website = "https://www.rcsb.org/pdb/rest/describePDB?structureId=%s" % pdb_id
     try:
         response = urllib.request.urlopen(website, timeout=10)
@@ -108,27 +108,46 @@ def validate_folder(target_folder):
     # 2.进行对接
 
     # 2.1准备受体
-    print("----------准备受体----------")
     preped_protein = os.path.join(process_folder, "preped.pdbqt")
-    prepare_receptor(input_protein, preped_protein, "None", 0, 1, 1, 1, 1)
+    if input_protein.endswith(".pdbqt"):
+        print("----------发现准备过的受体----------")
+        shutil.copy(input_protein, preped_protein)
+    else:
+        print("----------准备受体----------")
+        result = prepare_receptor(input_protein, preped_protein, "None", 0, 1, 1, 1, 1)
+        if not result:
+            print("----------准备受体失败，受体可能存在问题，请修复后重新尝试----------")
+            return
 
     # 2.2准备配体
-    print("----------准备配体----------")
-    pdb_ligand = os.path.join(process_folder, "ligand.pdb")
-    three_d_2_pdb(input_ligand, pdb_ligand, 0, "")
     preped_ligand = os.path.join(process_folder, "ligand.pdbqt")
-    pdb_mol2_2_pdbqt(pdb_ligand, preped_ligand)
+    pdb_ligand = None
+    if input_ligand.endswith(".pdbqt"):
+        print("----------发现准备过的配体----------")
+        shutil.copy(input_ligand, preped_ligand)
+    else:
+        print("----------准备配体----------")
+        pdb_ligand = os.path.join(process_folder, "ligand.pdb")
+        three_d_2_pdb(input_ligand, pdb_ligand, 0, "")
+        pdb_mol2_2_pdbqt(pdb_ligand, preped_ligand)
 
     # 2.3准备config文件
-    if input_pocket is None:
-        print("----------准备config文件----------")
-        gen_config(preped_protein, preped_ligand)
+    if len(config_file) == 0:
+        if input_pocket is None:
+            print("----------准备config文件----------")
+            gen_config(preped_protein, preped_ligand)
+        else:
+            print("----------检测到口袋，准备口袋------")
+            preped_pocket = os.path.join(process_folder, "preped_pocket.pdbqt")
+            prepare_receptor(input_pocket, preped_pocket, "None", 0, 1, 1, 1, 1)
+            print("----------准备config文件----------")
+            gen_config(preped_pocket, preped_ligand)
     else:
-        print("----------检测到口袋，准备口袋------")
-        preped_pocket = os.path.join(process_folder, "preped_pocket.pdbqt")
-        prepare_receptor(input_pocket, preped_pocket, "None", 0, 1, 1, 1, 1)
-        print("----------准备config文件----------")
-        gen_config(preped_pocket, preped_ligand)
+        print("----------检测到config文件----------")
+        for f in config_file:
+            file_name = os.path.split(f)[-1]
+            target_config_file = os.path.join(process_folder, file_name)
+            shutil.copy(f, target_config_file)
 
     # 2.4进行对接
     configs = os.listdir(process_folder)
@@ -137,7 +156,7 @@ def validate_folder(target_folder):
     for config in configs:
         if "config" in config:
             config_file = os.path.join(process_folder, config)
-            dock_output_file = os.path.join(output_folder, pdb_id + "_" + config[:-4] + ".pdbqt")
+            dock_output_file = os.path.join(output_folder, pdb_id + "_" + str(config[:-4]) + ".pdbqt")
             vina_dock(preped_ligand, preped_protein, config_file, dock_output_file)
 
     # 3.输出结果文件
@@ -156,6 +175,9 @@ def validate_folder(target_folder):
     mk_output_dir(xyz_folder)
     print("----------转换原始配体文件格式----------")
     xyz_ligand = os.path.join(xyz_folder, "ligand.xyz")
+    if pdb_ligand is None:
+        pdb_ligand = preped_ligand[:-2]
+        pdbqt_2_pdb(preped_ligand, pdb_ligand)
     ob_noh_xyz(pdb_ligand, xyz_ligand)
     print("----------输出报告---------")
     report_file = os.path.join(target_folder, "report.txt")
@@ -185,9 +207,10 @@ def validate_folder(target_folder):
                     dst = os.path.join(last_validate_folder, ligand_name + ".pdbqt")
                     shutil.copy(sec_ligand, dst)
                 f.writelines("%s\t%s\t%s\n" % (ligand_name, score, rmsd))
+    print("----------验证%s结束----------" % target_folder)
 
 
 if __name__ == '__main__':
-    validate_folder(r"D:\Desktop\5eiw")
+    validate_folder(r"D:\Desktop\1M17")
     # extract_pdbqt(r"D:\Desktop\3lnk\Output\3lnk_config1.pdbqt", r"D:\Desktop\3lnk\Extract", 0)
     # print(read_scores(r"D:\Desktop\1akv\Extract\1akv_config1_1.pdbqt")[0])
