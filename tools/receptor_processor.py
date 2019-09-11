@@ -8,6 +8,7 @@ from Bio.PDB import PDBIO
 from Bio import SeqIO
 import lxml.etree as et
 from urllib.request import urlopen
+from urllib.error import HTTPError, URLError
 
 from tools.check import Check
 from tools.configer import Configer
@@ -21,13 +22,26 @@ def check_pdb_status(pdb_id):
     :returns 状态和当前id的小写
     """
     url = 'http://www.rcsb.org/pdb/rest/idStatus?structureId=%s' % pdb_id
-    xml_file = urlopen(url)
-    xml = et.parse(xml_file)
-    xml_file.close()
+    xml = None
+    try:
+        xml_file = urlopen(url, timeout=10)
+    except HTTPError as e:
+        print("服务器无法处理请求！")
+        print("错误代码: ", e.code)
+        xml = None
+    except URLError as e:
+        print("无法连接到服务器!")
+        print("原因: ", e.reason)
+        xml = None
+    else:
+        xml = et.parse(xml_file)
+        xml_file.close()
     status = None
     current_pdb_id = pdb_id
+    if xml is None:
+        return ["UNKNOWN", current_pdb_id.lower()]
     for df in xml.xpath('//record'):
-        # 查看状态，有'UNKWOWN', 'OBSOLETE', or 'CURRENT'
+        # 查看状态，有'UNKNOWN', 'OBSOLETE', or 'CURRENT'
         status = df.attrib['status']
         # pdb_id过时，替换为新的
         if status == 'OBSOLETE':

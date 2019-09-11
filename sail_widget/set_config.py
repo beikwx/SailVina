@@ -70,12 +70,12 @@ class SetConfig(object):
     def save_para(self):
         # 检查python
         choose_python_path = self.choose_python_path_entry.textvariable.get()
-        if not Check.check_python(choose_python_path):
+        if not Check.check_python():
             choose_python_path = ""
 
         # 检查obabel
         obabel_path = self.choose_obabel_path_entry.textvariable.get()
-        if not Check.check_obabel(obabel_path):
+        if not Check.check_obabel():
             obabel_path = ""
 
         self.config.para_dict["python_path"] = choose_python_path

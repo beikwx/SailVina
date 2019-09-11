@@ -12,8 +12,7 @@ prepare_receptor4_path = others_path + os.sep + "prepare_receptor4.py"
 
 vina_path = others_path + os.sep + "vina.exe"
 
-substituents_path = os.path.realpath(__file__) + os.sep + ".." + os.sep + \
-                    "substituents.txt"
+substituents_path = others_path + os.sep + "substituents.txt"
 
 if __name__ == '__main__':
     print(substituents_path)

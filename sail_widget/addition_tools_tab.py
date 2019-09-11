@@ -288,6 +288,11 @@ class AdditionToolsTab(object):
 
     def _vina_validate(self, event):
         target_folder = self.input_path_entry.textvariable.get()
+
+        if not Check.check_obabel() and Check.check_python():
+            messagebox.showerror("错误！", "请检测obabel和mgltools的python设置！")
+            return
+
         if not vina_validator.validate_folder(target_folder):
             messagebox.showerror("错误！", "无法验证所选文件夹")
         else:

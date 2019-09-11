@@ -124,7 +124,7 @@ class Tab1(object):
                                                  textvariable=StringVar(),
                                                  text=Configer.get_para("preped_path"),
                                                  x=100, y=63, width=360)
-        create_tooltip(self.choose_prepare_output_path.entry, "准备受体后的输出目录")
+        create_tooltip(self.choose_prepare_output_path.entry, "准备后的受体输出目录")
         save_prepared_receptor_button.bind_open_dir(self.choose_prepare_output_path.textvariable,
                                                     title="选择输出目录")
 
@@ -158,7 +158,7 @@ class Tab1(object):
                                             value=Configer.get_para("fix_receptor"),
                                             x=400, y=fourth_y)
         create_tooltip(self.is_fix_receptor.checkbutton, "只针对单个受体。可以用来检测同源链，提取特定链，"
-                                                         "修复受体(受体受损较大可以尝试使用该功能)。"
+                                                         "修复受体(修复断链等)。"
                                                          "具体修复方法参见biopython官方文档")
 
         # 第五排，清理格式
@@ -215,9 +215,11 @@ class Tab1(object):
             for receptor in receptors:
                 input_file = input_dir + os.sep + receptor
                 output_file = output_path + os.sep + receptor + "qt"
-                prepare_receptor(input_file, output_file, fix_method, preserve_charges, nphs, lps, waters, nonstdres)
+                # 准备失败则继续
+                if not prepare_receptor(input_file, output_file, fix_method,
+                                        preserve_charges, nphs, lps, waters, nonstdres):
+                    continue
             messagebox.showinfo("成功", "成功准备受体！\n注意：自动准备会删除DNA等非标准残基，结果仅供参考。")
-            return
         elif input_file.endswith(".pdb"):
             # 如果勾选biopython功能
             if fix_receptor:
@@ -273,14 +275,16 @@ class Tab1(object):
                 structure = ReceptorProcessor.get_structure(input_file)
                 output_file = output_path + os.sep + "bio_fix_" + os.path.split(input_file)[-1]
                 ChainExtractor.extract_chain(structure, Tab1.chains, output_file)
-                messagebox.showinfo("Succeed!", "成功保存到%s" % output_file)
-                return
+                messagebox.showinfo("成功!", "成功保存到%s" % output_file)
             else:
                 # 没有勾选，直接转换单个文件为pdbqt文件
                 output_file = output_path + os.sep + "preped.pdbqt"
-                prepare_receptor(input_file, output_file, fix_method, preserve_charges, nphs, lps, waters, nonstdres)
-                messagebox.showinfo("成功", "成功准备受体！\n注意：自动准备会删除DNA等非标准残基，结果仅供参考。")
-                return
+                if prepare_receptor(input_file, output_file, fix_method,
+                                    preserve_charges, nphs, lps, waters, nonstdres):
+                    messagebox.showinfo("成功", "成功准备受体！\n注意：自动准备会删除DNA等非标准残基，结果仅供参考。")
+                else:
+                    messagebox.showerror("准备失败", "无法准备受体，请根据命令行查看原因。")
+                    return
         else:
             messagebox.showinfo("错误!", "不支持输入内容，请确定是文件夹或者pdb文件")
             return
@@ -518,10 +522,10 @@ class Tab1(object):
         if state == "CURRENT":
             self._download_pdb(current_entry, file_path)
         elif state == "OBSOLETE":
-            messagebox.showwarning("当前pdb已经过时！", "将下载%s" % current_entry)
+            print("当前pdb已经过时！", "将下载%s" % current_entry)
             self._download_pdb(current_entry, file_path)
         else:
-            messagebox.showerror("错误！", "当前pdb不存在，请检查id是否正确！")
+            messagebox.showerror("错误！", "无法检测状态，请检查网络或者id是否正确！")
             return
 
     def _download_pdb(self, pdb_id, file_path):
@@ -541,7 +545,7 @@ class Tab1(object):
         except requests.HTTPError:
             messagebox.showerror("下载错误", "请求失败，请重试")
             return
-        except:
+        except requests.ConnectionError:
             messagebox.showerror("下载错误", "请求失败，请重试")
             return
 
