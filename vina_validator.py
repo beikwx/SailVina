@@ -1,5 +1,7 @@
 import os
+import sys
 import urllib.request
+from socket import timeout
 from urllib.error import URLError, HTTPError
 from xml.dom import minidom
 import shutil
@@ -13,6 +15,21 @@ from tools.read_scores import read_scores
 from tools.rmsd import charnley_cal_rmsd
 
 MAX_RMSD = 2.0
+
+
+def validate_root_folder(root_folder):
+    """
+    验证一个包含多个受体的目录
+    :param root_folder: 包含多个受体的目录
+    :return:
+    """
+    path_file_list = os.listdir(root_folder)
+    for path_file in path_file_list:
+        folder_path = os.path.join(root_folder, path_file)
+        if os.path.isdir(folder_path):
+            if not validate_folder(folder_path):
+                print("无法验证%s" % folder_path)
+                continue
 
 
 def validate_folder(target_folder):
@@ -89,6 +106,13 @@ def validate_folder(target_folder):
     except URLError as e:
         print("无法连接到服务器!")
         print("原因: ", e.reason)
+        print("----------无法获取pdb信息------")
+        pdb_title = pdb_id
+        pdb_keywords = "not_found"
+        print("该pdb的标题是:%s" % pdb_title)
+        print("该pdb的关键词是:%s" % pdb_keywords)
+    except timeout:
+        print("连接服务器超时！")
         print("----------无法获取pdb信息------")
         pdb_title = pdb_id
         pdb_keywords = "not_found"
@@ -212,6 +236,5 @@ def validate_folder(target_folder):
 
 
 if __name__ == '__main__':
-    validate_folder(r"D:\Desktop\1M17")
-    # extract_pdbqt(r"D:\Desktop\3lnk\Output\3lnk_config1.pdbqt", r"D:\Desktop\3lnk\Extract", 0)
-    # print(read_scores(r"D:\Desktop\1akv\Extract\1akv_config1_1.pdbqt")[0])
+    root_path = sys.argv[1]
+    validate_root_folder(root_path)
