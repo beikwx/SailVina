@@ -65,6 +65,21 @@ def three_d_2_pdb(input_file, output_file, is_minimize, minimize):
         ob(input_file, output_file)
 
 
+def sdf_2_pdb_add_mw(input_file, output_file):
+    """
+    将sdf文件转为pdb文件，并返回分子量
+    :param input_file: sdf文件
+    :param output_file: 输出文件
+    :return 分子量
+    """
+    cmd = '%s %s -O %s --append "MW"' % (obabel_path, input_file, output_file)
+    os.system(cmd)
+    with open(output_file, "r") as f:
+        first_line = f.readline()
+        wm = first_line.split()[-1]
+    return float(wm)
+
+
 def ob_3d_min(input_file, output_file, ph, minimize):
     """
     进行3d和最小化的格式转换。
@@ -207,5 +222,4 @@ def convert_result(cmd, output_file):
 
 
 if __name__ == '__main__':
-    ob_noh_xyz(r"D:\Desktop\01.xyz", r"D:\Desktop\01-.xyz")
-    ob_noh_xyz(r"D:\Desktop\02.xyz", r"D:\Desktop\02-.xyz")
+    print(sdf_2_pdb_add_mw(r"D:\Desktop\1c3x\1c3x_ligand.sdf", r"D:\Desktop\1c3x\1c3x_ligand.pdb"))

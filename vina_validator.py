@@ -8,13 +8,14 @@ import shutil
 
 from tools.receptor_processor import prepare_receptor, gen_config
 from tools.file_processor import mk_output_dir
-from tools.format_convertor import three_d_2_pdb, pdb_mol2_2_pdbqt, \
+from tools.format_convertor import sdf_2_pdb_add_mw, pdb_mol2_2_pdbqt, \
     extract_pdbqt, ob_noh_xyz, pdbqt_2_pdb
 from tools.dock_processor import vina_dock
 from tools.read_scores import read_scores
 from tools.rmsd import charnley_cal_rmsd
 
 MAX_RMSD = 2.0
+MAX_LIGAND = 500
 
 
 def validate_root_folder(root_folder):
@@ -41,7 +42,7 @@ def validate_folder(target_folder):
     - 3lnk_ligand.sdf:共晶配体文件
     - 3lnk_pocket.pdb:位点文件。如果没有则对接整个蛋白
     - 3lnk_protein.pdb:蛋白文件
-    :return:
+    :return:出现错误返回假，完成返回真
     """
     if not os.path.isdir(target_folder):
         print("选择的必须是一个目录！")
@@ -70,7 +71,8 @@ def validate_folder(target_folder):
         if "protein" in file:
             input_protein = os.path.join(target_folder, file)
         if "ligand" in file:
-            input_ligand = os.path.join(target_folder, file)
+            if file.endswith("sdf"):
+                input_ligand = os.path.join(target_folder, file)
         if "pocket" in file:
             input_pocket = os.path.join(target_folder, file)
         if "config" in file:
@@ -83,8 +85,8 @@ def validate_folder(target_folder):
     if input_pocket is None:
         print("%s缺少口袋文件，将搜索整个蛋白进行重对接" % target_folder)
 
-    print("输入的配体是%s:" % input_protein)
-    print("输入的受体是%s:" % input_ligand)
+    print("输入的受体是%s:" % input_protein)
+    print("输入的配体是%s:" % input_ligand)
     print("输入的口袋是%s:" % input_pocket)
 
     print("----------准备从网络获取pdb信息----------")
@@ -152,7 +154,10 @@ def validate_folder(target_folder):
     else:
         print("----------准备配体----------")
         pdb_ligand = os.path.join(process_folder, "ligand.pdb")
-        three_d_2_pdb(input_ligand, pdb_ligand, 0, "")
+        mw = sdf_2_pdb_add_mw(input_ligand, pdb_ligand)
+        if mw > MAX_LIGAND:
+            print("所选分子的分子量为%f大于%f" % (mw, MAX_LIGAND))
+            return False
         pdb_mol2_2_pdbqt(pdb_ligand, preped_ligand)
 
     # 2.3准备config文件
