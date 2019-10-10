@@ -15,6 +15,7 @@ from sail_widget.s_combobox import SCombbox
 from tools.text import *
 from tools.check import Check
 from tools.format_convertor import *
+from tools.file_processor import mk_output_dir
 
 
 # 准备配体
@@ -265,7 +266,7 @@ class Tab3(object):
 
                 self.progress["maximum"] = len(input_ligands) * 2
 
-                os.mkdir(output_path + os.sep + "tmp")  # 创建临时文件夹
+                mk_output_dir(output_path + os.sep + "tmp")  # 创建临时文件夹
 
                 i = 0
                 while i < len(input_ligands):
@@ -330,7 +331,7 @@ class Tab3(object):
 
                 self.progress["maximum"] = len(input_ligands) * 2
 
-                os.mkdir(output_path + os.sep + "tmp")  # 创建临时文件夹
+                mk_output_dir(output_path + os.sep + "tmp")  # 创建临时文件夹
 
                 i = 0
                 while i < len(input_ligands):
@@ -373,7 +374,7 @@ class Tab3(object):
 
                 self.progress["maximum"] = len(input_ligands) * 2
 
-                os.mkdir(output_path + os.sep + "tmp")  # 创建临时文件夹
+                mk_output_dir(output_path + os.sep + "tmp")  # 创建临时文件夹
 
                 i = 0
                 while i < len(input_ligands):
