@@ -71,7 +71,7 @@ def validate_folder(target_folder):
         if "protein" in file:
             input_protein = os.path.join(target_folder, file)
         if "ligand" in file:
-            if file.endswith("sdf"):
+            if file.endswith("sdf") or file.endswith("pdbqt"):
                 input_ligand = os.path.join(target_folder, file)
         if "pocket" in file:
             input_pocket = os.path.join(target_folder, file)
