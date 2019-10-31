@@ -270,13 +270,16 @@ def read_subs(position: int):
         for line in lines:
             if line.startswith("#") or line == "\n":
                 continue
+            if line.startswith("H"):
+                sub_list.append("")
+                continue
             if position == 0:
-                sub_list.append(line.split("=")[1].strip())
+                sub_list.append(line.split(" = ")[1].strip())
             elif position == 1:
-                if len(line.split("=")) == 3:
-                    sub_list.append(line.split("=")[2].strip())
+                if len(line.split(" = ")) == 3:
+                    sub_list.append(line.split(" = ")[2].strip())
                 else:
-                    sub_list.append(line.split("=")[1].strip())
+                    sub_list.append(line.split(" = ")[1].strip())
     return sub_list
 
 

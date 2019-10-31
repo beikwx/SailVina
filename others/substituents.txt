@@ -15,13 +15,19 @@ H =
 # CH(CH3)(CH3) = C(C)C
 # 正丁基
 # CH2CH2CH2CH3 = CCCC
-# 异丁基
+# 异丁基(需要首位)
 # C(CH3)(CH3)(CH3) = C(C)(C)(C)
-# 三氟甲基
+# 三氟甲基(需要首位)
 # CF3 = C(F)(F)F
+# 羧基(需要首位)
+COOH = C(=O)O
+# 甲酯基
+COOCH3 = C(=O)OC
 
 # 氨基
 # NH2 = N
+# 硝基(需要首位)
+NO2 = [N+](=O)[O-]
 # 氨甲基
 # CH3NH2 = NC = CN
 # 哌嗪基
@@ -46,6 +52,8 @@ H =
 # OH = O
 # 甲氧基
 # OCH3 = OC = CO
+# 三氟甲氧基
+OCF3 = OC(F)(F)F = C(F)(F)FO
 
 # F
 F = F

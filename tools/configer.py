@@ -45,8 +45,8 @@ class Configer(object):
             return ""
         with open(para_file, "r") as f:
             for line in f.readlines():
-                if line.split("=")[0] == para_text:
-                    return str(line.split("=")[1].strip())
+                if line.split("=", 1)[0] == para_text:
+                    return str(line.split("=", 1)[1].strip())
             else:
                 return ""
 
