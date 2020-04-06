@@ -1,5 +1,5 @@
 # 主窗口文字
-WINDOWS_TITLE = "SailVina"
+WINDOWS_TITLE = "SailVina final v1.0"
 
 # 切换卡文字
 TAB1_TEXT = "准备受体"
@@ -63,7 +63,7 @@ TAB4_HELP_TEXT = "本界面用于调用vina进行分子对接\n\n" \
                  "受体为A、B、C，分别为C:/receptors/A，C:/receptors/B，C:/receptors/C，选择" \
                  "C:/receptors即可。"
 
-TAB5_HELP_TEXT = "工具"
+TAB5_HELP_TEXT = "一些工具，具体使用参照教程。"
 
 TAB6_HELP_TEXT = "本界面用于生成配体-受体复合物\n\n" \
                  "操作步骤\n" \
@@ -75,15 +75,15 @@ TAB6_HELP_TEXT = "本界面用于生成配体-受体复合物\n\n" \
                  "1.对于对接生成的pdbqt文件，可以直接选择构象结合\n" \
                  "2.脚本首先将pdbqt文件转换成pdb文件再结合生成pdb文件。"
 
-TAB7_HELP_TEXT = "SailVina\n\n" \
+TAB7_HELP_TEXT = "SailVina final v1.0\n\n" \
                  "本软件由python的Tkinter开发，调用biopython（受体准备），mgltools（准备配体，受体）" \
-                 "，openbabel（格式转化，文件合并）\n\n" \
+                 "，openbabel（格式转化，文件合并），RMSD（计算RMSD）\n\n" \
                  "开发者：beikwx\n" \
                  "Bug及反馈邮箱：studyforever0225@gmail.com\n" \
                  "Github开源地址：https://github.com/beikwx/SailVina\n" \
-                 "我的个人博客：https://beikwx.top/\n\n" \
+                 "我的个人博客：https://sailmedicine.top/\n\n" \
                  "感谢提出意见和bug反馈的各位同学，本人读研事情也比较多，平时偶尔用到分子对接，但是现在对接没有" \
-                 "一个好用的GUI，所以想编写这个软件一劳永逸，更新较慢，如果有好的想法希望多多交流。\n\n" \
+                 "一个好用的GUI，所以想编写这个软件一劳永逸，该版本为最终版本，只会修复小量bug，不再有新功能的加入，欢迎进行二次开发！\n\n" \
                  "Happy docking!"
 
 TAB8_HELP_TEXT = "其他工具都放在这里"
