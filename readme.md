@@ -1,7 +1,9 @@
 # SailVina - Autodock Vina分子对接全套整合软件
 在线文档见：<https://github.com/beikwx/SailVina>  
-Word文档下载：[百度网盘](https://pan.baidu.com/s/1A-yI6cWsAYvdO4OneJTl1A 
-) 提取码：vsoe
+Word文档下载：[百度网盘](https://pan.baidu.com/s/1B_ph06sHV1-HXne8S3YjBA) 提取码：yg0w  
+exe版本下载：[百度网盘](https://pan.baidu.com/s/1FwGf1nbsZ5LvwI-e9pt0vA)
+提取码：5z8a  
+python版本下载：[百度网盘](https://pan.baidu.com/s/1IMq2Y97lA8qNOCoggkWgpw) 提取码：bih6
 
 ## 1.介绍
 
@@ -61,7 +63,7 @@ scipy（计算RMSD）pip install scipy
 
 注：由于pyinstaller打包的一些问题，该版本没有计算rmsd、分子生成器和一键验证的功能。
 
-下载[main.7z]()，解压后运行其中的main.exe即可。
+下载[SailVina.rar](https://pan.baidu.com/s/1FwGf1nbsZ5LvwI-e9pt0vA)(提取码：5z8a)，解压后运行其中的main.exe即可。
 
 注意：解压路径不要包含空格，中文！！比如C:/Program
 files/、D:/软件/。会出现软件打不开，路径不识别等错误。
@@ -212,7 +214,7 @@ d\. 点击"选择输出目录"选择config.txt文件的输出目录。点击输�
 
 #### 3.3.2 使用ADT来手动确定对接位点 
 
-a\. 打开ADT，载入pdb文件。具体参考3.2.2的a-c步骤。
+a\. 打开ADT，载入pdb文件。具体参考[3.2.2](#3.2.2-使用ADT手动准备受体)的a-c步骤。
 
 b\. 点击"Grid",点击Grid Box会出现一个盒子。
 
@@ -563,7 +565,6 @@ d.  点击提取配体即可。完成后后弹窗，输出目录有选择的文�
 
 ### 4.6 快速生成相同骨架不同取代基的化合物库
 
-注：该功能只有python版本有！
 
 该功能用于生成骨架相同，但是取代基不同的小分子化合物库。原理是通过smiles表达式，插入R基团组合生成化合物。通过修改other文件夹下面的substituents.txt文件来修改R基团，内置了一些常用取代基，需要对smiles表达式有一定的了解再进行修改。
 
@@ -588,7 +589,6 @@ c.  在SailVina的其他工具中，点击"分子生成器"，在弹出窗口的
 
 ### 4.7 计算两个相同小分子之间的rmsd
 
-注：该功能只有python版本有！
 
 RMSD表示均方根偏差，表示两个分子之间x, y,
 z坐标的平均方差。该功能修改自<https://github.com/charnley/rmsd>的计算方法，源程序会将原子进行旋转再进行计算，求最小的RMSD值，而本方法不会对原子进行旋转。当然可以通过选择旋转方法来求RMSD，但是通常不用于分子对接后的计算。计算的分子结构必须一模一样，其中的原子表达形成可以不一样(CCNCC和CNCCC类似，只要表达的同一种分子即可，可以通过原子对齐来解决)。
@@ -620,8 +620,7 @@ c\. 对于单个配体，结果以窗体弹出
 ![](./media/image96.png)
 
 ### 4.8 自动对接方案验证
-
-注：该功能只有python版本有！（设置的最大RMSD为2埃，另外配体分子量小于500才会运行，目前不支持修改，可以在源码vina\_validator.py中修改首行的数值，另外该脚本可以脱离SailVina单独运行）
+（设置的最大RMSD为2埃，另外配体分子量小于500才会运行，目前不支持修改，可以在源码vina\_validator.py中修改首行的数值，在python版本中可以脱离SailVina单独运行）
 
 该功能可以用来自动验证对接方案的准确性，可以匹配pdbbind数据库，无需处理pdbbind库就可以直接运行。如果是手动，需要准备的文件如下：
 
