@@ -1,4 +1,5 @@
 import os
+from tools.file_path import vina_path
 
 
 def vina_dock(ligand, protein, config, output):
@@ -10,8 +11,8 @@ def vina_dock(ligand, protein, config, output):
     :param output:输出文件名 ./Output/pdb1/01.pdbqt
     """
 
-    cmd = "vina --ligand %s --receptor %s --config %s --out %s" % \
-          (ligand, protein, config, output)
+    cmd = "%s --ligand %s --receptor %s --config %s --out %s" % \
+          (vina_path, ligand, protein, config, output)
 
     # print(cmd)
     os.system(cmd)
