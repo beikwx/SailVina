@@ -1,9 +1,9 @@
 # SailVina - Autodock Vina分子对接全套整合软件
 在线文档见：<https://github.com/beikwx/SailVina>  
-Word文档下载：[百度网盘](https://pan.baidu.com/s/14tQ_nj4_gIVvji4NEofZeg) 
-提取码：yzqy  
-exe版本下载：[百度网盘](https://pan.baidu.com/s/1gX1uAbANT5yQEyuISMuxgw)
-提取码：gssm  
+Word文档下载：[百度网盘](https://pan.baidu.com/s/19moBZp5TjZiKjDIW0R7edw) 
+提取码：eow2  
+exe版本下载：[百度网盘](https://pan.baidu.com/s/1Tv_FDMWryQI9iu3tEev6hg)
+提取码：e4ss   
 python版本下载：[百度网盘](https://pan.baidu.com/s/16Sj_AtlagxwbF3fNaMST-A) 提取码：ykxb 
 
 ## 目录
