@@ -51,15 +51,14 @@ Vina，openbabel等来便捷的进行分子对接。
 必要软件（安装完整路径切记不要有中文和空格！！比如C:/program
 files/mgltools和D:/软件/mgltools等都是不合法的！!运行脚本可能会出现意想不到的错误！）
 
-a.  Mgltools(<http://mgltools.scripps.edu/downloads>)：用于调用pdbqt转换脚本。
+a. [Mgltools](<http://mgltools.scripps.edu/downloads>)：用于调用pdbqt转换脚本。  
+[百度网盘](https://pan.baidu.com/s/1GxGjxp7AgbHzN5jobC9lSQ) 提取码：ueeo  
+b.[Openbabel](<https://sourceforge.net/projects/openbabel/files/openbabel/2.4.1/>)：用于格式转换。  
+[百度网盘](https://pan.baidu.com/s/1zZMeU15UTfc4dk3W7lBH0w) 提取码：m8o9    
 
-b.  Openbabel(<https://sourceforge.net/projects/openbabel/files/openbabel/2.4.1/>)：用于格式转换。
-
-可选软件
-
-a.  ChemOffice：用于化学结构的绘制和格式转换。
-
-b\. Pymol：用于查看结构。
+可选软件  
+a.  ChemOffice：用于化学结构的绘制和格式转换。  
+b. [Pymol](https://pymol.org/2/)：用于查看结构。
 
 ### 2.1 方法一：使用python运行 
 安装python3，任何版本都可以，推荐python3.6或者python3.7。使用pip命令安装额外运行库：
