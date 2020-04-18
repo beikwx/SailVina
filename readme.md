@@ -75,10 +75,7 @@ scipy（计算RMSD）pip install scipy
 
 ### 2.2 方法二：直接运行exe程序 
 
-
-注：由于pyinstaller打包的一些问题，该版本没有计算rmsd、分子生成器和一键验证的功能。
-
-下载[SailVina.rar](https://pan.baidu.com/s/1FwGf1nbsZ5LvwI-e9pt0vA)(提取码：5z8a)，解压后运行其中的main.exe即可。
+下载[SailVina.rar](https://pan.baidu.com/s/1Tv_FDMWryQI9iu3tEev6hg)(提取码：e4ss)，解压后运行其中的main.exe即可。
 
 注意：解压路径不要包含空格，中文！！比如C:/Program
 files/、D:/软件/。会出现软件打不开，路径不识别等错误。
@@ -207,7 +204,7 @@ xxx.pdb后表示完成。点击确定，选择要保存的位置即可。
 
 如果原始pdb文件中有共晶的小分子抑制剂等，那么该配体一般为活性位点，可以根据该配体自动生成对接位点。
 
-a\. 参见4.2提取pdb文件中的小分子配体。
+a\. 参见[4.2](#42-提取pdb文件中的小分子配体)提取pdb文件中的小分子配体。
 
 b\. 在"准备对接配置"选项卡中点击"读取共晶配体"，选择提取的小分子配体。
 
@@ -511,7 +508,7 @@ c\. 命令行和结果无问题即可。
 
 ### 4.3 尝试修复pdb文件
 
-如果某些pdb文件由于缺少残基或者某些地方丢失，可以使用biopython自动修复，具体参见biopython官方文档。
+如果某些pdb文件由于缺少残基或者某些地方丢失，可以使用biopython自动修复，具体参见[biopython](https://biopython.org/)官方文档。
 
 a\. 选择单个受体。
 
