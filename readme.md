@@ -75,7 +75,7 @@ scipy（计算RMSD）pip install scipy
 
 ### 2.2 方法二：直接运行exe程序 
 
-下载[SailVina.rar](https://pan.baidu.com/s/1Haas2vvBgiHHrg-rnVzQoQ)(提取码：7711)，解压后运行其中的main.exe即可。
+下载[SailVina.zip](https://pan.baidu.com/s/1Haas2vvBgiHHrg-rnVzQoQ)(提取码：7711)，解压后运行其中的main.exe即可。
 
 注意：解压路径不要包含空格，中文！！比如C:/Program
 files/、D:/软件/。会出现软件打不开，路径不识别等错误。
